@@ -1,18 +1,28 @@
 workflows:
   ios-workflow:
     name: Taxi Paradis iOS
+
     environment:
       xcode: latest
+
     scripts:
       - name: Install dependencies
         script: |
           npm install
-          npm install @capacitor/ios
+
       - name: Build web app
         script: |
           npm run build
+
       - name: Sync Capacitor iOS
         script: |
           npx cap sync ios
+
+      - name: Build iOS
+        script: |
+          xcode-project build-ipa \
+            --workspace "ios/App/App.xcworkspace" \
+            --scheme "App"
+
     artifacts:
       - build/ios/ipa/*.ipa
