@@ -1,0 +1,548 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#edf2f7;
+    overflow-y:auto;
+}
+
+header{
+    height:70px;
+    background:#111827;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 30px;
+    box-shadow:0 2px 10px rgba(0,0,0,.2);
+}
+
+.logo{
+    font-size:12px;
+    font-weight:bold;
+}
+
+.titlu{
+    font-size:12px;
+}
+
+
+/* ZONA PRINCIPALA */
+
+main{
+    display:grid;
+    grid-template-columns:350px 1fr 280px;
+    gap:15px;
+    min-height:calc(100vh - 70px);
+    padding:15px;
+    align-items:start;
+}
+
+
+/* HARTA */
+
+#map{
+    width:100%;
+    height:100%;
+    min-height:500px;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+
+/* PANOURI */
+
+.panou{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.15);
+    overflow-y:auto;
+}
+
+
+.panou h2{
+    margin-bottom:20px;
+    color:#1f2937;
+}
+
+
+/* FORMULAR */
+
+input,
+textarea{
+
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+
+    border:1px solid #d1d5db;
+    border-radius:8px;
+
+    font-size:12px;
+}
+
+
+textarea{
+    height:90px;
+    resize:none;
+}
+
+
+button{
+
+    width:100%;
+    padding:15px;
+
+    border:none;
+    border-radius:10px;
+
+    background:#16a34a;
+    color:white;
+
+    font-size:12px;
+    cursor:pointer;
+}
+
+
+/* STATII */
+
+#statii{
+
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+
+}
+
+
+.statie{
+
+    background:#f8fafc;
+
+    border:2px solid #e5e7eb;
+
+    border-radius:12px;
+
+    padding:12px;
+
+    cursor:pointer;
+
+}
+
+
+.statie h3{
+
+    text-align:center;
+    margin-bottom:10px;
+
+}
+
+
+.masini{
+    min-height:40px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    max-height:150px;
+    overflow-y:auto;
+}
+
+
+.masina{
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:3px 8px;
+
+    border-radius:12px;
+
+    font-weight:bold;
+
+    font-size:12px;
+    line-height:14px;
+
+}
+/* COMANDA NOUA */
+
+.panou.comanda{
+    padding:15px;
+}
+
+.panou.comanda h2{
+    margin-bottom:12px;
+}
+
+.panou.comanda input{
+    margin-bottom:10px;
+    padding:10px;
+}
+
+.panou.comanda textarea{
+    height:55px;
+    margin-bottom:10px;
+}
+
+.panou.comanda button{
+    padding:12px;
+    font-size:12px;
+}
+.coloana-stanga{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+.cardComanda{
+
+    background:white;
+    border-left:6px solid #16a34a;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+
+}
+
+.cardComanda:hover{
+
+    transform:scale(1.02);
+
+}
+
+.cardTitlu{
+
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:8px;
+
+}
+
+.cardStatus{
+
+    margin-top:8px;
+    color:#16a34a;
+    font-weight:bold;
+
+}
+
+#detaliiComanda{
+
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:450px;
+    max-width:90%;
+    background:white;
+    border-radius:15px;
+    padding:25px;
+    box-shadow:0 0 40px rgba(0,0,0,.5);
+    z-index:99999;
+
+}
+
+#fundalDetalii{
+
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.45);
+    z-index:99998;
+
+}
+
+#inchideDetalii{
+
+    margin-top:20px;
+    background:#2563eb;
+
+}
+.folderComenzi{
+
+    width:100%;
+    height:80px;
+
+    margin-bottom:20px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    border-radius:15px;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 25px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.folderComenzi:hover{
+
+    transform:scale(1.02);
+
+    background:#1d4ed8;
+
+}
+
+.folderComenzi span{
+
+    background:white;
+
+    color:#2563eb;
+
+    padding:8px 15px;
+
+    border-radius:30px;
+
+    font-size:12px;
+
+}
+#comenziActive,
+#istoricComenzi{
+    display:none;
+}
+.titluLive{
+    font-size:12px;
+}
+
+
+#activitateLive h2{
+    font-size:24px;
+}
+
+#activitateLive .comanda,
+#activitateLive .card{
+    font-size:12px;
+    padding:5px;
+}
+
+
+#activitateLive h2{
+    font-size:20px !important;
+}
+
+#activitateLive{
+    font-size:12px !important;
+}
+
+#activitateLive *{
+    font-size:12px !important;
+}
+
+
+#activitateLive{
+    min-height:220px !important;
+}
+
+
+
+#btnSoferi {
+    min-height: 55px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#meniulSoferi .folderComenzi {
+    margin-top: 8px;
+    min-height: 45px;
+    font-size: 15px;
+}
+
+
+
+#btnSoferi {
+    background: #1e88e5;
+    color: white;
+    border: 2px solid #1565c0;
+    min-height: 55px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#btnSoferi:hover {
+    background: #1565c0;
+}
+
+
+
+
+#btnSoferi {
+    background: linear-gradient(#4caf50, #2e7d32);
+    color: white;
+    border: 2px solid #1b5e20;
+    min-height: 60px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+#meniulSoferi button:nth-child(1) {
+    background: linear-gradient(#2196f3, #1565c0);
+    color: white;
+    border: 2px solid #0d47a1;
+}
+
+
+#meniulSoferi button:nth-child(2) {
+    background: linear-gradient(#f44336, #b71c1c);
+    color: white;
+    border: 2px solid #7f0000;
+}
+
+
+#btnSoferi:hover,
+#meniulSoferi button:hover {
+    filter: brightness(1.15);
+}
+
+
+
+
+.fereastra {
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#222;
+    color:white;
+    padding:25px;
+    border-radius:12px;
+    z-index:9999;
+    width:350px;
+    box-shadow:0 0 20px black;
+}
+
+
+.fereastra input {
+    display:block;
+    width:90%;
+    margin:10px auto;
+    padding:10px;
+    font-size:16px;
+}
+
+
+.fereastra button {
+    margin:8px;
+    padding:10px 20px;
+    cursor:pointer;
+}
+
+
+#fereastraSofer{
+    width:350px;
+    padding:25px;
+    border-radius:15px;
+    background:#111;
+    box-shadow:0 0 25px rgba(0,0,0,.5);
+    text-align:center;
+}
+
+#fereastraSofer h2{
+    margin-bottom:20px;
+    font-size:22px;
+}
+
+#fereastraSofer input{
+    width:90%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:1px solid #444;
+    font-size:16px;
+}
+
+#fereastraSofer button{
+    width:90%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+    border:0;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+
+#fereastraSofer{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:9999;
+    background:#fff;
+    color:#222;
+    width:380px;
+    padding:25px;
+    border-radius:18px;
+    box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
+
+#fereastraSofer h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#111;
+}
+
+#fereastraSofer input{
+    display:block;
+    width:100%;
+    box-sizing:border-box;
+    padding:12px;
+    margin:10px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+#fereastraSofer button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+
+.masina{
+    width:60px;
+    min-width:60px;
+    height:42px;
+    padding:3px;
+    text-align:center;
+    font-size:11px;
+    line-height:13px;
+}
+
+.masina small{
+    font-size:9px;
+}
+

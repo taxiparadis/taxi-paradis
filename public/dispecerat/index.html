@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Paradis - Dispecerat</title>
+
+    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        🚖 Taxi Paradis
+    </div>
+
+    <div class="titlu">
+        DISPECERAT
+    </div>
+
+</header>
+
+<main>
+
+    <!-- STÂNGA -->
+
+    <div class="coloana-stanga">
+
+        <section class="panou comanda">
+
+            <h2>Comandă nouă</h2>
+
+            <input id="adresa" type="text" placeholder="Adresă">
+
+            <input id="destinatie" type="text" placeholder="Destinație (opțional)">
+
+            <input id="telefon" type="text" placeholder="Telefon (doar pentru exterior)">
+
+            <button id="butonManual" class="butonManualNormal">
+                ➕ ADAUGĂ COMANDA
+            </button>
+
+
+<div id="alegereStatii" style="display:none;">
+
+<h3>Alegeți 3 stații</h3>
+
+<label><input type="checkbox" value="gara"> GARA</label><br>
+<label><input type="checkbox" value="bcr"> BCR</label><br>
+<label><input type="checkbox" value="hcc"> HCC</label><br>
+<label><input type="checkbox" value="spital"> SPITAL</label><br>
+<label><input type="checkbox" value="P"> P - ROTATIVA (STATIA 1 → STATIA 2 → STATIA 3)</label><br>
+<label><input type="checkbox" value="rezi"> REZI</label><br>
+<label><input type="checkbox" value="parc"> PARC</label><br>
+<label><input type="checkbox" value="elena_doamna"> ELENA DOAMNA</label><br>
+<label><input type="checkbox" value="targu_vechi"> TARGU VECHI</label><br>
+
+<button id="salveazaStatii">
+💾 SALVEAZĂ 3 STAȚII
+</button>
+
+</div>
+
+            
+
+            <button id="trimite">
+                🚖 TRIMITE COMANDA
+            </button>
+
+        </section>
+
+
+        <section class="panou">
+
+            <button id="btnActive" class="folderComenzi">
+    ▶ 📂 COMENZI ACTIVE
+    <span id="nrActive">0</span>
+</button>
+
+            <div id="comenziActive"></div>
+
+        </section>
+
+
+        <section class="panou">
+
+  <button id="btnIstoric" class="folderComenzi">
+    ▶ 📂 ISTORIC COMENZI
+    <span id="nrIstoric">0</span>
+</button>
+
+            <div id="istoricComenzi"></div>
+
+<section class="panou">
+
+<button id="btnSoferi" class="folderComenzi">
+    ▶ 👨‍✈️ ȘOFERI
+</button>
+
+<div id="meniulSoferi" style="display:none;">
+
+<button id="btnInfoSoferi" class="folderComenzi">
+    👨‍✈️ LISTĂ ȘOFERI
+</button>
+
+<button id="btnSchimbaParola" class="folderComenzi">
+    🔑 SCHIMBARE PAROLĂ ȘOFERI
+</button>
+
+<button id="btnPedepse" class="folderComenzi">
+    ⚠️ PEDEPSE ȘOFERI
+</button>
+
+</div>
+
+</section>
+
+        </section>
+
+    </div>
+
+
+    <!-- MIJLOC -->
+
+<div class="coloana-mijloc">
+
+    <section class="panou harta">
+
+        <div id="map"></div>
+
+    </section>
+
+    <section class="panou activitate">
+
+        <h2 class="titluLive">📡 ACTIVITATE LIVE</h2>
+
+        <div id="activitateLive"></div>
+
+    </section>
+
+</div>
+
+    <!-- DREAPTA -->
+
+    <section class="panou">
+
+        <h2>Stații</h2>
+
+        <div id="statii">
+
+            <div class="statie">
+                <h3>GARA</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>BCR</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>HCC</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>STATIA1</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>STATIA2</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>STATIA3</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>REZI</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>PARC</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>ELENA DOAMNA</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>TÂRGU VECHI</h3>
+                <div class="masini"></div>
+            </div>
+
+            <div class="statie">
+                <h3>LIBER</h3>
+                <div class="masini"></div>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<div id="fundalDetalii"></div>
+
+<div id="detaliiComanda">
+
+<h2>🚖 Detalii comandă</h2>
+
+<div id="continutDetalii"></div>
+
+<button id="inchideDetalii">
+Închide
+</button>
+
+</div>
+
+
+<div id="fereastraSofer" class="fereastra">
+
+<h2>🚖 Adăugare șofer</h2>
+
+<input placeholder="Indicativ">
+
+<input type="password" placeholder="Parolă">
+
+<input placeholder="Număr mașină">
+
+<input placeholder="Marca mașinii">
+
+<button>SALVEAZĂ ȘOFER</button>
+
+<button onclick="document.getElementById('fereastraSofer').style.display='none'">
+ÎNCHIDE
+</button>
+
+</div>
+
+<div id="fereastraParola" class="fereastra">
+<h2>🔑 Schimbare parolă șofer</h2>
+
+<input id="indicativParola" placeholder="Indicativ șofer">
+<input id="parolaNoua" placeholder="Parolă nouă" type="password">
+
+<button id="salveazaParola">SALVEAZĂ</button>
+<button onclick="document.getElementById('fereastraParola').style.display='none'">ÎNCHIDE</button>
+
+</div>
+
+
+
+
+<div id="fereastraPedepse" class="fereastra">
+
+<h2>🚫 Pedepse șoferi</h2>
+
+<input id="indicativPedeapsa" placeholder="Indicativ șofer">
+
+<input id="motivPedeapsa" placeholder="Motiv pedeapsă">
+
+<select id="durataPedeapsa">
+<option value="1min">1 minut (TEST)</option>
+<option value="30">30 ore</option>
+<option value="60">60 ore</option>
+<option value="90">90 ore</option>
+<option value="120">120 ore</option>
+<option value="150">150 ore</option>
+<option value="200">200 ore</option>
+<option value="240">240 ore</option>
+<option value="260">260 ore</option>
+<option value="280">280 ore</option>
+<option value="310">310 ore</option>
+</select>
+
+<button id="aplicaPedeapsa">APLICĂ PEDEAPSĂ</button>
+
+<button id="deblocheazaSofer">DEBLOCHEAZĂ</button>
+
+<button onclick="document.getElementById('fereastraPedepse').style.display='none'">
+ÎNCHIDE
+</button>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

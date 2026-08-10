@@ -1,0 +1,40 @@
+[
+ {
+  "adresa":"Magazinele Albastre",
+  "aliasuri":[
+    "magazinele albastre",
+    "magazine albastre",
+    "magazinul albastru",
+    "magazine albastre in fata"
+  ],
+  "statii":[
+    "HCC",
+    "P"
+  ]
+ },
+ {
+  "adresa":"King",
+  "aliasuri":[
+    "king",
+    "shaorma king",
+    "shaorma la king",
+    "la king"
+  ],
+  "statii":[
+    "P",
+    "R",
+    "Pa"
+  ]
+ },
+ {
+  "adresa":"Alibaba",
+  "aliasuri":[
+    "alibaba",
+    "la alibaba"
+  ],
+  "statii":[
+    "HCC",
+    "P"
+  ]
+ }
+]

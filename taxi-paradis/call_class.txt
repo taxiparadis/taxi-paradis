@@ -1,0 +1,96 @@
+class Call:
+    """Represents one SIP dialog (outgoing or incoming) for audio."""
+
+    State = ("init", "calling", "ringing", "answered", "ended", "failed")
+
+    def __init__(self, ua: "UserAgent", account: Account, *, outbound: bool):
+        self.ua = ua
+        self.account = account
+        self.outbound = outbound
+
+        self.call_id: str = ""
+        self.local_tag: str = new_tag()
+        self.remote_tag: str = ""
+        self.local_uri: URI = URI()
+        self.remote_uri: URI = URI()
+        self.remote_target: URI = URI()
+        self.cseq: int = 0
+        self.invite_request: SIPRequest | None = None    # last sent / received INVITE
+        self.invite_response: SIPResponse | None = None  # last 2xx
+        self.route_set: list[str] = []
+        self.contact: str = ""
+
+        self.state: str = "init"
+        self._answered = asyncio.Event()
+        self._ended = asyncio.Event()
+        self._failed_reason: str | None = None
+
+        self.rtp: RTPSession | None = None
+        self.local_sdp: SDPSession | None = None
+        self.remote_sdp: SDPSession | None = None
+        self.codec: Codec | None = None
+
+        # For inbound calls: the source UDP address that delivered the INVITE.
+        # All UAS responses (180/200/...) and reverse requests use this.
+        self.source: tuple[str, int] | None = None
+
+        self._pending_invite_response: asyncio.Future[SIPResponse] | None = None
+        self._auth_retried = False
+
+    # ------------------------------------------------------------------
+    async def wait_answered(self, timeout: float | None = None) -> None:
+        await asyncio.wait_for(self._answered.wait(), timeout=timeout)
+        if self.state in ("failed", "ended"):
+            raise TransactionError(self._failed_reason or "call failed")
+
+    async def wait_ended(self) -> None:
+        await self._ended.wait()
+
+    @property
+    def is_active(self) -> bool:
+        return self.state == "answered"
+
+    # ------------------------------------------------------------------
+    # Audio helpers
+    # ------------------------------------------------------------------
+    def write_pcm(self, pcm: bytes) -> None:
+        if self.rtp:
+            self.rtp.write_pcm(pcm)
+
+    def on_pcm(self, callback) -> None:
+        if self.rtp:
+            self.rtp.set_on_pcm(callback)
+
+    def on_dtmf(self, callback) -> None:
+        """Register a callback for inbound DTMF digits (RFC 4733)."""
+        if self.rtp:
+            self.rtp.set_on_dtmf(callback)
+
+    async def send_dtmf(
+        self, digits: str, duration_ms: int = 160, gap_ms: int = 80,
+        volume: int = 10,
+    ) -> None:
+        """Send one or more DTMF digits via RFC 4733 telephone-event.
+
+        ``digits`` is any string of ``0-9``, ``*``, ``#``, ``A-D``. ``gap_ms``
+        is the silent gap inserted between consecutive digits.
+        """
+        if not self.rtp:
+            raise OpenSIPError("call has no active RTP session")
+        gap = max(0.0, gap_ms / 1000.0)
+        for i, d in enumerate(digits):
+            if i > 0 and gap:
+                await asyncio.sleep(gap)
+            await self.rtp.send_dtmf(d, duration_ms=duration_ms, volume=volume)
+
+    # ------------------------------------------------------------------
+    # Outgoing actions
+    # ------------------------------------------------------------------
+    async def answer(self) -> None:
+        if not self.outbound:
+            await self.ua._answer_call(self)
+        else:
+            raise OpenSIPError("cannot answer an outbound call")
+
+    async def hangup(self) -> None:
+        await self.ua._hangup_call(self)

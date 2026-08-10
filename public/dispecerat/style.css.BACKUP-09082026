@@ -1,0 +1,817 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
+    background:#eef2f7;
+}
+
+body{
+    overflow-x:hidden;
+    overflow-y:auto;
+    color:#111827;
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+header{
+    height:70px;
+    background:#111827;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 30px;
+    box-shadow:0 2px 10px rgba(0,0,0,.2);
+}
+
+.logo{
+    font-size:18px;
+    font-weight:800;
+}
+
+.titlu{
+    font-size:16px;
+    font-weight:600;
+}
+
+main{
+    display:grid;
+    grid-template-columns:350px 1fr 280px;
+    gap:15px;
+    min-height:calc(100vh - 70px);
+    padding:15px;
+}
+
+#map{
+    width:100%;
+    height:calc(100vh - 100px);
+    min-height:500px;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+}
+
+.panou{
+    background:white;
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 4px 15px rgba(0,0,0,.10);
+    overflow-y:auto;
+}
+
+.panou h2{
+    margin-bottom:15px;
+    color:#111827;
+    font-size:20px;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:13px;
+    margin-bottom:12px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    font-size:16px;
+    outline:none;
+    background:#fff;
+}
+
+input:focus,
+textarea:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+textarea{
+    height:90px;
+    resize:none;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:11px;
+    background:#16a34a;
+    color:white;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+#statii{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+}
+
+.statie{
+    background:#f8fafc;
+    border:2px solid #e5e7eb;
+    border-radius:14px;
+    padding:12px;
+    cursor:pointer;
+}
+
+.statie h3{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.masini{
+    min-height:40px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    max-height:150px;
+    overflow-y:auto;
+}
+
+.masina{
+    width:60px;
+    min-width:60px;
+    height:42px;
+    padding:3px;
+    text-align:center;
+    background:#2563eb;
+    color:white;
+    border-radius:12px;
+    font-weight:bold;
+    font-size:11px;
+    line-height:13px;
+}
+
+.masina small{
+    font-size:9px;
+}
+
+.coloana-stanga{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.panou.comanda{
+    padding:15px;
+}
+
+.panou.comanda h2{
+    margin-bottom:12px;
+}
+
+.panou.comanda input{
+    margin-bottom:10px;
+    padding:11px;
+}
+
+.panou.comanda textarea{
+    height:55px;
+    margin-bottom:10px;
+}
+
+.panou.comanda button{
+    padding:13px;
+    font-size:15px;
+}
+
+.cardComanda{
+    background:white;
+    border-left:5px solid #16a34a;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+.cardTitlu{
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.cardStatus{
+    margin-top:8px;
+    color:#16a34a;
+    font-weight:bold;
+}
+
+.folderComenzi{
+    width:100%;
+    min-height:65px;
+    margin-bottom:12px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:14px;
+    font-size:16px;
+    font-weight:bold;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 18px;
+}
+
+.folderComenzi span{
+    background:white;
+    color:#2563eb;
+    padding:7px 13px;
+    border-radius:30px;
+    font-size:14px;
+}
+
+#comenziActive,
+#istoricComenzi{
+    display:none;
+}
+
+#activitateLive{
+    max-height:300px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    font-size:14px;
+}
+
+#activitateLive h2{
+    font-size:20px !important;
+}
+
+#activitateLive *{
+    font-size:14px !important;
+}
+
+#btnSoferi{
+    background:linear-gradient(#4caf50,#2e7d32);
+    color:white;
+    border:2px solid #1b5e20;
+    min-height:60px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+#meniulSoferi .folderComenzi{
+    margin-top:8px;
+    min-height:50px;
+    font-size:15px;
+}
+
+#meniulSoferi button:nth-child(1){
+    background:linear-gradient(#2196f3,#1565c0);
+}
+
+#meniulSoferi button:nth-child(2){
+    background:linear-gradient(#f44336,#b71c1c);
+}
+
+/* MODALE */
+
+.fereastra{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    color:#222;
+    padding:25px;
+    border-radius:18px;
+    z-index:9999;
+    width:380px;
+    max-width:92%;
+    box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
+
+.fereastra input{
+    width:100%;
+    margin:10px 0;
+}
+
+#fereastraSofer{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:9999;
+    background:white;
+    color:#222;
+    width:380px;
+    max-width:92%;
+    padding:25px;
+    border-radius:18px;
+    box-shadow:0 10px 40px rgba(0,0,0,.35);
+    text-align:center;
+}
+
+#fereastraSofer h2{
+    margin-bottom:20px;
+    font-size:22px;
+}
+
+#fereastraSofer input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+}
+
+#fereastraSofer button{
+    width:100%;
+    margin-top:10px;
+}
+
+#detaliiComanda{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:450px;
+    max-width:92%;
+    max-height:85vh;
+    overflow-y:auto;
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 10px 40px rgba(0,0,0,.5);
+    z-index:99999;
+}
+
+#fundalDetalii{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    z-index:99998;
+}
+
+#inchideDetalii{
+    margin-top:20px;
+    background:#2563eb;
+}
+
+#butonManual{
+    background:#555;
+    color:white;
+    font-weight:bold;
+    padding:15px;
+    width:100%;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.butonManualNormal{
+    background:#555;
+    color:white;
+    font-weight:bold;
+}
+
+.butonManualAlarma{
+    background:red !important;
+    color:white !important;
+    font-weight:bold;
+    animation:clipireButon 1s infinite;
+}
+
+@keyframes clipireButon{
+    0%{opacity:1;}
+    50%{opacity:.3;}
+    100%{opacity:1;}
+}
+
+#alegereStatii{
+    background:white;
+    padding:15px;
+    margin-top:10px;
+    border-radius:10px;
+    border:2px solid #444;
+}
+
+#alegereStatii h3{
+    margin-top:0;
+}
+
+#alegereStatii label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:8px 0;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#alegereStatii input[type="checkbox"]{
+    width:20px;
+    height:20px;
+}
+
+#salveazaStatii{
+    margin-top:15px;
+    width:100%;
+    padding:12px;
+    background:#008000;
+    color:white;
+    font-weight:bold;
+    border:none;
+    border-radius:8px;
+}
+
+/* =========================
+   TELEFON
+========================= */
+
+@media (max-width:700px){
+
+    html,
+    body{
+        width:100%;
+        min-height:100%;
+        background:#f1f5f9;
+    }
+
+    body{
+        overflow-x:hidden;
+    }
+
+    header{
+        height:58px;
+        padding:0 12px;
+        position:sticky;
+        top:0;
+        z-index:5000;
+    }
+
+    .logo{
+        font-size:16px;
+    }
+
+    .titlu{
+        font-size:13px;
+    }
+
+    main{
+        display:flex;
+        flex-direction:column;
+        width:100%;
+        gap:10px;
+        padding:10px;
+        min-height:auto;
+    }
+
+    #map{
+        order:1;
+        width:100%;
+        height:52vh;
+        min-height:320px;
+        border-radius:16px;
+    }
+
+    .coloana-stanga{
+        order:2;
+        width:100%;
+        gap:10px;
+    }
+
+    .panou{
+        width:100%;
+        padding:14px;
+        border-radius:16px;
+        box-shadow:0 3px 12px rgba(0,0,0,.10);
+    }
+
+    .panou h2{
+        font-size:18px;
+        margin-bottom:12px;
+    }
+
+    input,
+    textarea{
+        font-size:16px;
+        padding:13px;
+        min-height:48px;
+    }
+
+    button{
+        min-height:50px;
+        font-size:16px;
+    }
+
+    #statii{
+        grid-template-columns:1fr;
+    }
+
+    .statie{
+        padding:11px;
+        border-radius:13px;
+    }
+
+    .masini{
+        max-height:130px;
+    }
+
+    .masina{
+        width:58px;
+        min-width:58px;
+        height:40px;
+        font-size:10px;
+    }
+
+    .folderComenzi{
+        min-height:58px;
+        font-size:15px;
+        padding:0 14px;
+    }
+
+    .folderComenzi span{
+        padding:6px 11px;
+        font-size:13px;
+    }
+
+    #activitateLive{
+        max-height:280px;
+    }
+
+    #activitateLive h2{
+        font-size:18px !important;
+    }
+
+    #activitateLive *{
+        font-size:13px !important;
+    }
+
+    #detaliiComanda{
+        width:calc(100% - 20px);
+        max-width:none;
+        padding:18px;
+        border-radius:18px;
+        max-height:85vh;
+    }
+
+    .fereastra,
+    #fereastraSofer{
+        width:calc(100% - 24px);
+        max-width:none;
+        padding:20px;
+        border-radius:18px;
+    }
+
+    #fereastraSofer h2{
+        font-size:20px;
+    }
+
+    #btnSoferi{
+        min-height:55px;
+        font-size:17px;
+    }
+
+    #meniulSoferi .folderComenzi{
+        min-height:52px;
+        font-size:15px;
+    }
+
+    #alegereStatii{
+        padding:13px;
+    }
+
+    #alegereStatii label{
+        font-size:15px;
+        min-height:40px;
+    }
+
+    #salveazaStatii{
+        min-height:50px;
+    }
+}
+
+/* TELEFOANE FOARTE MICI */
+
+@media (max-width:380px){
+
+    header{
+        height:54px;
+    }
+
+    .logo{
+        font-size:14px;
+    }
+
+    .titlu{
+        font-size:12px;
+    }
+
+    main{
+        padding:7px;
+    }
+
+    #map{
+        height:48vh;
+        min-height:280px;
+    }
+
+    .panou{
+        padding:12px;
+    }
+
+    .folderComenzi{
+        font-size:14px;
+    }
+}
+
+/* =====================================================
+   TAXI PARADIS - ASPECT PROFESIONAL TELEFON
+   09.08.2026
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #111827;
+    }
+
+    #map {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        border-radius: 0 !important;
+        z-index: 0 !important;
+    }
+
+    /* LOGIN */
+
+    #zona-login {
+        width: calc(100% - 36px) !important;
+        max-width: 380px !important;
+        padding: 25px 20px !important;
+        border-radius: 24px !important;
+        background: rgba(17, 24, 39, 0.97) !important;
+        box-shadow: 0 20px 60px rgba(0,0,0,.55) !important;
+    }
+
+    #zona-login h2 {
+        font-size: 25px !important;
+        margin-bottom: 20px !important;
+    }
+
+    #zona-login input {
+        width: 100% !important;
+        height: 52px !important;
+        box-sizing: border-box !important;
+        margin: 6px 0 !important;
+        padding: 14px !important;
+        border-radius: 13px !important;
+        border: 1px solid #374151 !important;
+        background: #1f2937 !important;
+        color: white !important;
+        font-size: 16px !important;
+    }
+
+    #zona-login input::placeholder {
+        color: #9ca3af !important;
+    }
+
+    #zona-login button {
+        min-height: 54px !important;
+        border-radius: 13px !important;
+        font-size: 17px !important;
+        font-weight: 800 !important;
+    }
+
+    /* TITLU */
+
+    body > h2 {
+        top: 12px !important;
+        left: 12px !important;
+        padding: 10px 14px !important;
+        border-radius: 14px !important;
+        font-size: 15px !important;
+        z-index: 1000 !important;
+        background: rgba(17,24,39,.92) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,.3) !important;
+    }
+
+    /* ONLINE */
+
+    #online {
+        top: 12px !important;
+        right: 12px !important;
+        min-height: 42px !important;
+        padding: 9px 13px !important;
+        border-radius: 13px !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,.3) !important;
+    }
+
+    /* SCHIMBARE PAROLA */
+
+    #schimbaParola {
+        top: 62px !important;
+        right: 12px !important;
+        min-height: 38px !important;
+        padding: 7px 11px !important;
+        border-radius: 11px !important;
+        font-size: 12px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,.25) !important;
+    }
+
+    /* COMANDA NOUA */
+
+    #oferta {
+        left: 10px !important;
+        right: 10px !important;
+        bottom: 10px !important;
+        padding: 13px !important;
+        border-radius: 22px !important;
+        background: rgba(17,24,39,.96) !important;
+        box-shadow: 0 -5px 30px rgba(0,0,0,.45) !important;
+        max-height: 72vh !important;
+        overflow-y: auto !important;
+    }
+
+    #panouOferta > div:first-child {
+        font-size: 22px !important;
+        margin-bottom: 13px !important;
+    }
+
+    #panouOferta > div:not(:first-child) {
+        padding: 12px !important;
+        border-radius: 14px !important;
+        margin-bottom: 9px !important;
+    }
+
+    #plecare,
+    #destinatie {
+        font-size: 18px !important;
+        line-height: 1.25 !important;
+    }
+
+    #accepta,
+    #refuza {
+        height: 56px !important;
+        min-height: 56px !important;
+        margin-top: 5px !important;
+        border-radius: 14px !important;
+        font-size: 17px !important;
+        font-weight: 900 !important;
+    }
+
+    #cronometru {
+        font-size: 26px !important;
+        font-weight: 900 !important;
+    }
+
+    /* CURSA ACCEPTATA */
+
+    #panouCursa {
+        font-size: 15px !important;
+    }
+
+    #panouCursa h3 {
+        font-size: 21px !important;
+        margin: 5px 0 15px !important;
+    }
+
+    #panouCursa p {
+        font-size: 15px !important;
+        line-height: 1.4 !important;
+        margin: 8px 0 !important;
+    }
+
+    #telefonClient {
+        font-size: 23px !important;
+    }
+
+    #sunaClient,
+    #googleMaps,
+    #laClient,
+    #clientAbsent,
+    #renunta {
+        min-height: 54px !important;
+        height: 54px !important;
+        border-radius: 14px !important;
+        font-size: 16px !important;
+        font-weight: 800 !important;
+    }
+}

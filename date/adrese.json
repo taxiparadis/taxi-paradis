@@ -1,0 +1,3696 @@
+[
+  {
+    "adresa": "Administrația Financiară ANAF",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Akimat-Libertății",
+    "statii": [
+      "R",
+      "Pa",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Aleea Plopilor",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Răsăritului",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Rodnei",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Creșei",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Stadionului",
+    "statii": [
+      "TV",
+      "P",
+      "ED"
+    ]
+  },
+  {
+    "adresa": "Aleea Stațiunii",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Mihai Viteazul",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Aleea Unirii",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Castanilor",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Petru Rareș",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Teilor",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Dragoș Vodă",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Braniștei",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Aleea Viilor",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea 1 Decembrie",
+    "statii": [
+      "HCC",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Carpați",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Aleea Panseluțelor",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Liliacului",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Ghioceilor",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aleea Stejarilor",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Alexandru cel Bun pana la 50",
+    "statii": [
+      "R",
+      "HCC",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Alexandru cel Bun dupa 51",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Alexandru Odobescu",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Amadeus langa Posta",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Amadeus langa China Mall",
+    "statii": [
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Ambiance-Libertății",
+    "statii": [
+      "R",
+      "Pa",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Ana Ipătescu",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Ana-Maria HCC",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ana-Maria BICAZ",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ana Maria fostul Oscar",
+    "statii": [
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ana Maria Cerna",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Adriana Farm",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Autoglobal",
+    "statii": [
+      "ED",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Andrei Mureșanu",
+    "statii": [
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Andrei Șaguna",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Anton Pann",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Antonius Caracalla pana la 125",
+    "statii": [
+      "P",
+      "HCC",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Antonius Caracalla dupa 126",
+    "statii": [
+      "G",
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Anvelope",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "ANL-Gară",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "ANL-Sc 6",
+    "statii": [
+      "P",
+      "BCR",
+      "S",
+      "G"
+    ]
+  },
+  {
+    "adresa": "ANL-Crucea de Piatră",
+    "statii": [
+      "G",
+      "P",
+      "BCR",
+      "S"
+    ]
+  },
+  {
+    "adresa": "ANL-Top Gun",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "ANL-Iancu Jianu",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "ANL-Dragos Voda",
+    "statii": [
+      "HCC",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Apia (la parchet)",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Aprodu Purice pana la 50",
+    "statii": [
+      "R",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Aprodu Purice dupa 51",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Armoniei",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Auto-Șurubel",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Buzesti",
+    "statii": [
+      "G",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Bujorului",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Badicom Service",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Bogdan Vodă",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Brad-Farmacie",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "BINISAN (I.Asan)",
+    "statii": [
+      "BCR",
+      "S",
+      "P",
+      "G"
+    ]
+  },
+  {
+    "adresa": "BRD (sens unic)",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Blocul Militar (Cerna)",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Blocul Social (Autogara)",
+    "statii": [
+      "G",
+      "P",
+      "S",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Boema (langa Posta)",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Bicaz de la 1-20",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Bicaz dupa 21",
+    "statii": [
+      "BCR",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Biserica M.D-nului (Piata)",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Biserica Belodan (B-vard)",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Biserica Toți Sfinții (Bicaz)",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Biserica Sf.Ion (Gh.Doja)",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Biserica Sf.Nicolae (Hy Life)",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Biserica Lipscani",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Biserica Catolica",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Biserica Baptista (Romula)",
+    "statii": [
+      "Pa",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Balconașe",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "BCR (B-vard)",
+    "statii": [
+      "BCR",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Biolab-Lab.Analize(Bicaz 39)",
+    "statii": [
+      "BCR",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Brutaria Mazilescu",
+    "statii": [
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Brutaria Budulan",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Brutaria Duinea",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Blocul Centrala (spate ABC)",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Blocul Garaje (spate ABC)",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Bella Salon",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Blocul Turn",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Banca Transilvania",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Bellagio-Moby Stil",
+    "statii": [
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Bistritei",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Bradului",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Champion’s",
+    "statii": [
+      "Pa",
+      "TV",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Cireșilor",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Casa Albă",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cerna",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cristal-Home",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Classic",
+    "statii": [
+      "Pa",
+      "TV",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "CARTIER GARA",
+    "statii": [
+      "G",
+      "S",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Calea București",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Craiovei 1 pana la 100",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Craiovei dupa 101",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Creșa nr.2 Targ",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Caraiman",
+    "statii": [
+      "G",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cabina Telefonică",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Casa Marly",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Complex Gară",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cabana Gară",
+    "statii": [
+      "G",
+      "S",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cabana Top-Gun",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Caminul Handicapați",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cantina Socială",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Coquette",
+    "statii": [
+      "Pa",
+      "R",
+      "P",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Crizantemei (spate ABC)",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Cuza Vodă",
+    "statii": [
+      "Pa",
+      "TV",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Cab.Veter.Dr.Dinu",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cab. Veterin. Paul",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cab.Dr.Savu",
+    "statii": [
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Cazacu HCC",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cazacu -Sens unic",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Călărași",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Crinului",
+    "statii": [
+      "R",
+      "Pa",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Caminul Militar (Top Gun)",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Cezar Boliac",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cooperației",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Contemporanului",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Colonel Pop",
+    "statii": [
+      "R",
+      "HCC",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Coram",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "CLINICA SANTE",
+    "statii": [
+      "P",
+      "HCC",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Clinica Veterinara",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cupt.Paine Duinea",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Creșa Dr.Marinescu",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cămin Romanița",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cab.Dr.Lia",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Costel B-vard",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cimitir Rezii (Nr.2)",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cimitir Carpati (Nr.1)",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Carpati",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Carpați U.M",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Cab.Dr.Ciotarnoiu(Cercelan)",
+    "statii": [
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cabinete Med Fam (Bulevard)",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Cabinete Med Fam -Marului-Dulama",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Digix (M. Eminescu)",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Doamna Stanca",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Doctor Marinescu",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Dragoș Vodă",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Drumul Celarului",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Dulama",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Dezrobirii",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Digi (RDS)",
+    "statii": [
+      "Pa",
+      "TV",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Depozit Sincer",
+    "statii": [
+      "TV",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "2T Service",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "1 Decembrie de la 1-5",
+    "statii": [
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "1 Decembrie pana la 109",
+    "statii": [
+      "HCC",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "1 Decembrie dupa 110",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Dobrogeanu Gherea",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Distrigas Teatru",
+    "statii": [
+      "Pa",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Dolce Vita Craiovei",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Dolce Vita Cofetărie",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Doldurea Gas (Vagoane)",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "13 Decembrie",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Dan Pizza",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Delfinet",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Decebal",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Depozit Iliescu",
+    "statii": [
+      "HCC",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Depozit Luz",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Depozit TDG (Energy Gym)",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Doi stejari",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Doi Pași Dr. Marinescu",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Doi Pași Dulama",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Doi Pași Carpati",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Doi Pași Craiovei",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Doi Pasi Gara",
+    "statii": [
+      "G",
+      "S",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "DD Service Rahovei",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "DACIA SERVICE",
+    "statii": [
+      "G",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "ELIGON (C. BOLIAC)",
+    "statii": [
+      "G",
+      "BCR",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Elegant",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "EUROSHOP (Traian 11)",
+    "statii": [
+      "P",
+      "BCR",
+      "S",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Ema-Home-Design",
+    "statii": [
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Elena Doamna",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Eveline Olteniei",
+    "statii": [
+      "BCR",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Europlus (Doldurea-A. Mureșan)",
+    "statii": [
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Energy Gym",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Farmacia Adriana",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Farmacia Cercelan",
+    "statii": [
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Farmacia Bujor",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Fabrica de mobilă (Bicaz)",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Fabrica de Mobilă (N.Voda)",
+    "statii": [
+      "BCR",
+      "TV",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Filipescu (Centrul de Dializa)",
+    "statii": [
+      "P",
+      "BCR",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "FNC (Carpati)",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Fortele de munca (langa ANAF)",
+    "statii": [
+      "TV",
+      "P",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Fleară (Bicaz)",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Fabrica Paine (Craiovei 20)",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Fantasia",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Fisc (Adm.Financiara)",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Frizeria Lux",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Fabrica de Smoală",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Ferolli",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Flady",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Firică (Bulev.)",
+    "statii": [
+      "BCR",
+      "TV",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Farmacia Dona(Spital)",
+    "statii": [
+      "S",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Farmacia Catena (Spital)",
+    "statii": [
+      "S",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Fun Curier (G. Magheru)",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Florăria Eden",
+    "statii": [
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Fabrica Teldo",
+    "statii": [
+      "BCR",
+      "G",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "FLACĂRA (fostul cinema)",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Famous Restaurant",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Farmacia Dr. Max (langa Flanco)",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Farmacia Dr. Max (la Bojan)",
+    "statii": [
+      "BCR",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Food Shop",
+    "statii": [
+      "P",
+      "Pa",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Ghioceilor",
+    "statii": [
+      "TV",
+      "BCR",
+      "P",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Grădinița Firică",
+    "statii": [
+      "BCR",
+      "TV",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Grădinița HCC",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Grădinița Nr.4 (Parchet)",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Gato Noble",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Grădinița Craiovei-Văduva",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Grădinița Nr.3 (langa Sc.2)",
+    "statii": [
+      "HCC",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Grădinița Nr.1 (langa Politie)",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Grădinița B-vard",
+    "statii": [
+      "BCR",
+      "G",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Grigore Alexandrescu",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "George Coșbuc",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Giorgiana",
+    "statii": [
+      "P",
+      "Pa",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Gina",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Gala B-vard",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ghe.Asachi",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Ghe.Șincai",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Ghe.Lazăr",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "General Magheru pana la 40",
+    "statii": [
+      "HCC",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "General Magheru dupa 41",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "GALERIA COMERCIALA",
+    "statii": [
+      "HCC",
+      "P",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Galla Events (Carpati)",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "General Tell",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "GREEN GARDEN",
+    "statii": [
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "GĂRII Strada",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ghe.Doja pana la 40",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ghe.Doja dupa 41",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "H.C.Lecca",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Hotel Cristal Home",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Hotel Edinburgh",
+    "statii": [
+      "Pa",
+      "TV",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Heaven",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Happy",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Handicapati",
+    "statii": [
+      "HCC",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Hotel Romanița",
+    "statii": [
+      "G",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "HOTEL ROMULA",
+    "statii": [
+      "Pa",
+      "P",
+      "R",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Hotel Gia",
+    "statii": [
+      "Pa",
+      "TV",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Heliade Radulescu",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ion Mincu",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ion Creangă",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Irish Pub",
+    "statii": [
+      "Pa",
+      "R",
+      "P",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Intrarea Nouă",
+    "statii": [
+      "TV",
+      "BCR",
+      "P",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "I.G.O (Craiovei)",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "I.G.O (Casa Armatei)",
+    "statii": [
+      "Pa",
+      "TV",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "I.G.O (V.Alecsandri)",
+    "statii": [
+      "G",
+      "P",
+      "BCR",
+      "S"
+    ]
+  },
+  {
+    "adresa": "I.S.C.P",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Industrial",
+    "statii": [
+      "HCC",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Italiano",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Iancu Jianu pana la 19(Casa Gam)",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Iancu Jianu dupa 20",
+    "statii": [
+      "R",
+      "Pa",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ionita Asan",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ion Neculce (Intr+Strad)",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "ING",
+    "statii": [
+      "P",
+      "R",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Intim",
+    "statii": [
+      "Pa",
+      "R",
+      "P",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Ivănescu",
+    "statii": [
+      "HCC",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ionexim",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Infrățirii",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Imperium",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "I.L.Caragiale",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ion Voda cel Cumplit",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "ITR",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Judecătorie",
+    "statii": [
+      "R",
+      "Pa",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Județ (No Name)",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Jandarmerie",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "KFY Service",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Kaufland",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "K2 Hotel (Romanita)",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Liceul Agricol",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Liceul Industrial",
+    "statii": [
+      "HCC",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Liceul Ionita Asan",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Liceul Mihai Viteazul",
+    "statii": [
+      "TV",
+      "BCR",
+      "P",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Lăcrămioarei",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Lotrului",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Libertății",
+    "statii": [
+      "R",
+      "Pa",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Leader International",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Luk’oil",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Liliacului",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Lidl",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "La Casuta Magazin",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "La Taraba",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mihai Eminescu",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Miron Costin",
+    "statii": [
+      "Pa",
+      "R",
+      "ED",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mihail Kogălniceanu",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Monument-Bold",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Monument-HCC",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Malina Gară",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Malina-Lux (Dob.Gherea)",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Mărului-Bloc. de la Teatru",
+    "statii": [
+      "Pa",
+      "TV",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Mărului Bl.H+case dupa 10",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mărului case pînă la 10",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Mărășești",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mihai Viteazul",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Mario-HCC",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mario Carpați",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Mag.Albastre",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Maior Crantea",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Maceșului (Morii)",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mărăști",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Monte-Verde-parc",
+    "statii": [
+      "TV",
+      "ED",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Monte-Verde-firmă",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Modex",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Muncii",
+    "statii": [
+      "P",
+      "HCC",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Mircea Vodă-Complex",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mircea Vodă 1 pana la 100",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mircea Vodă dupa 101",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Maxident",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mărțișorului",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Mahmut Arena",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Nioka",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Nicolae Ursu Horia",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Nicolae Titulescu 1-14",
+    "statii": [
+      "BCR",
+      "TV",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Nicolae Titulescu pana la 50",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Nicolae Titulescu dupa 51",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Notariat Souma (langă Muzeu)",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Notariat Cernat",
+    "statii": [
+      "HCC",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Notariat Lepădatu",
+    "statii": [
+      "R",
+      "Pa",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Negru Vodă",
+    "statii": [
+      "BCR",
+      "TV",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Raze de Soare",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Royal XXL",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Raiffeisen",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Radu Șerban",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Oituz",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Radu Calomfirescu",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Olteniei",
+    "statii": [
+      "BCR",
+      "P",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Restaurant Casu",
+    "statii": [
+      "HCC",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Optimiștii",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Rahovei",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ocolul Silvic",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Răsurii",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Oana Bran Studio",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Red Plazza",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Retro",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Reconstrucției",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Rozelor",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Roccafrancca",
+    "statii": [
+      "G",
+      "P",
+      "S",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Parașutiști",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Romanița-firmă",
+    "statii": [
+      "G",
+      "P",
+      "S",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Panduri",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Rezii",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Parchet",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Romaniței Stradă",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Paraului",
+    "statii": [
+      "G",
+      "P",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Rico-Parc",
+    "statii": [
+      "TV",
+      "ED",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Parcare Pascu",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Romula",
+    "statii": [
+      "Pa",
+      "R",
+      "P",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Petre Puican",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Roma Events",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Petru Maior",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Rompetrol (Zegheanu)",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Petru Rareș pana la 40",
+    "statii": [
+      "HCC",
+      "P",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Rompetrol V. Ureche",
+    "statii": [
+      "G",
+      "P",
+      "BCR",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Petru Rareș dupa 41",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Riff",
+    "statii": [
+      "Pa",
+      "R",
+      "P",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Poliție",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Pizza Roma Spital",
+    "statii": [
+      "S",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Petrom Variantă",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Școala Nr.1",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Petrom Carpați",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Școala Nr.2",
+    "statii": [
+      "HCC",
+      "P",
+      "R",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Panseluțelor",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Școala Nr.3",
+    "statii": [
+      "ED",
+      "Pa",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Pictor Grigorescu",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Școala Nr.5 (Gh. Margheru)",
+    "statii": [
+      "R",
+      "ED",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Piața Victoriei",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Școala Nr.6 (C-tin Filipescu)",
+    "statii": [
+      "P",
+      "BCR",
+      "G",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Plevnei de la 1-13",
+    "statii": [
+      "HCC",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Plevnei dupa 14",
+    "statii": [
+      "S",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Școala Sanitară-C.Davila",
+    "statii": [
+      "TV",
+      "BCR",
+      "P",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Poenari",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Seven (7) Studio",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Poporului",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "SCANDINAVIA (Second Hand)",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Poștă",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Sinsay",
+    "statii": [
+      "HCC",
+      "P",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Primăverii",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Sportissimo",
+    "statii": [
+      "HCC",
+      "P",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Princeps",
+    "statii": [
+      "R",
+      "Pa",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Santheo",
+    "statii": [
+      "P",
+      "BCR",
+      "TV"
+    ]
+  },
+  {
+    "adresa": "Progresului",
+    "statii": [
+      "ED",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Spago-BBC",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Pompieri",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Stadion",
+    "statii": [
+      "TV",
+      "ED",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Spalatoria Sorin(Carpați)",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Primavera",
+    "statii": [
+      "BCR",
+      "TV",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Stația Betoane",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Primărie",
+    "statii": [
+      "Pa",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Strada Nouă",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Parangului",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Service-Fleară",
+    "statii": [
+      "TV",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Service-Florică",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Service-Autogară",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Ulpia(HCC)",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Spiru Haret",
+    "statii": [
+      "TV",
+      "Pa",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Uzina de Apă (spre Stoenești)",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Silozului",
+    "statii": [
+      "G",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Uzina de apă (A. Pann 5)",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Service 2T",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Uzina Electrică",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Service F1",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "U.M.Carpati (0268)",
+    "statii": [
+      "BCR",
+      "S",
+      "TV",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Service 2D- Rahovei",
+    "statii": [
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "UM Gara (1256)",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Silva",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "UM Înfrățirii",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Sala Polivalentă",
+    "statii": [
+      "TV",
+      "Pa",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Unix Piese Auto",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Stația Electrică (Variantă)",
+    "statii": [
+      "G",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Spital-Plevnei (poarta 1)",
+    "statii": [
+      "S",
+      "BCR",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Spital-Boliac (poarta 2)",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Spital-V. Alecsandri (poarta 3)",
+    "statii": [
+      "P",
+      "S",
+      "BCR",
+      "G"
+    ]
+  },
+  {
+    "adresa": "VITA PLUS",
+    "statii": [
+      "P",
+      "BCR",
+      "HCC"
+    ]
+  },
+  {
+    "adresa": "Sala Sport Prietenia",
+    "statii": [
+      "R",
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Vasile Alecsandri pana la 44",
+    "statii": [
+      "P",
+      "BCR",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Vasile Alecsandri dupa 45",
+    "statii": [
+      "G",
+      "P",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Ștrandului",
+    "statii": [
+      "TV",
+      "P",
+      "ED",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Traian pana la 40",
+    "statii": [
+      "P",
+      "BCR",
+      "S",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Traian dupa 41",
+    "statii": [
+      "G",
+      "P",
+      "BCR",
+      "S"
+    ]
+  },
+  {
+    "adresa": "Targul Vechi",
+    "statii": [
+      "TV",
+      "BCR",
+      "P",
+      "Pa"
+    ]
+  },
+  {
+    "adresa": "Targul Nou pana la 50",
+    "statii": [
+      "R",
+      "HCC",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Targul Nou dupa 51",
+    "statii": [
+      "HCC",
+      "R",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "TELDO (fostul ABC)",
+    "statii": [
+      "P",
+      "Pa",
+      "R"
+    ]
+  },
+  {
+    "adresa": "Top-Gun",
+    "statii": [
+      "P",
+      "TV",
+      "BCR"
+    ]
+  },
+  {
+    "adresa": "Zamfir (A.Caracalla)",
+    "statii": [
+      "P",
+      "HCC",
+      "G"
+    ]
+  },
+  {
+    "adresa": "Teatrul National/de Vară",
+    "statii": [
+      "Pa",
+      "TV",
+      "P",
+      "R"
+    ]
+  },
+  {
+    "adresa": "TDG-Depozit",
+    "statii": [
+      "HCC",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Zegheanu-Peco",
+    "statii": [
+      "HCC",
+      "R",
+      "P"
+    ]
+  },
+  {
+    "adresa": "ZORILOR",
+    "statii": [
+      "R",
+      "HCC",
+      "Pa",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Țepeș Vodă pana la 50",
+    "statii": [
+      "BCR",
+      "S",
+      "G",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Țepeș Vodă după 51",
+    "statii": [
+      "G",
+      "BCR",
+      "S",
+      "P"
+    ]
+  },
+  {
+    "adresa": "bloc g1 scara 1",
+    "statii": [
+      "hcc",
+      "P",
+      "rezi"
+    ]
+  },
+  {
+    "adresa": "bloc g1 scara 2",
+    "statii": [
+      "hcc",
+      "P",
+      "rezi"
+    ]
+  },
+  {
+    "adresa": "pizza story",
+    "statii": [
+      "hcc",
+      "P",
+      "rezi"
+    ]
+  },
+  {
+    "adresa": "anl scoala 6",
+    "statii": [
+      "bcr",
+      "spital",
+      "P"
+    ]
+  },
+  {
+    "adresa": "bulevard 105",
+    "statii": [
+      "gara",
+      "bcr",
+      "spital"
+    ]
+  },
+  {
+    "adresa": "la balconase",
+    "statii": [
+      "P",
+      "rezi",
+      "parc"
+    ]
+  },
+  {
+    "adresa": "2 stejari blocul 10",
+    "statii": [
+      "P",
+      "rezi",
+      "parc"
+    ]
+  },
+  {
+    "adresa": "la stoienesti",
+    "statii": [
+      "gara",
+      "hcc",
+      "P"
+    ]
+  },
+  {
+    "adresa": "stoienesti",
+    "statii": [
+      "gara",
+      "hcc",
+      "P"
+    ]
+  },
+  {
+    "adresa": "La cimitir poarta principala",
+    "statii": [
+      "bcr",
+      "spital",
+      "targu_vechi"
+    ]
+  },
+  {
+    "adresa": "Cimitir poarta eroilor",
+    "statii": [
+      "bcr",
+      "spital",
+      "targu_vechi"
+    ]
+  },
+  {
+    "adresa": "Unitatea militara gara",
+    "statii": [
+      "gara",
+      "bcr",
+      "spital"
+    ]
+  },
+  {
+    "adresa": "baia mare",
+    "statii": [
+      "P",
+      "rezi",
+      "parc"
+    ]
+  },
+  {
+    "adresa": "in statie parck",
+    "statii": [
+      "P",
+      "rezi",
+      "targu_vechi"
+    ]
+  },
+  {
+    "adresa": "babiciu",
+    "statii": [
+      "gara",
+      "hcc",
+      "P"
+    ]
+  },
+  {
+    "adresa": "Yazaky",
+    "statii": [
+      "gara",
+      "hcc",
+      "P"
+    ]
+  }
+]

@@ -1,0 +1,584 @@
+// PORNIRE HARTĂ
+
+let map = L.map('map').setView([44.4300, 24.3700], 14);
+console.log("HARTA PORNITA");
+
+// HARTA OPENSTREETMAP
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
+
+
+// TEST STAȚIA GARA
+
+let gara = L.marker([
+    44.4300,
+    24.3700
+])
+.addTo(map)
+.bindPopup("🚕 Stația GARA")
+.openPopup();
+
+
+// CLICK PE STAȚII
+
+const statii = {
+
+    "gara": {
+        lat: 44.119591,
+        lng: 24.364296
+    },
+
+    "bcr": {
+        lat: 44.116599,
+        lng: 24.351951
+    },
+
+    "hcc": {
+        lat: 44.111158,
+        lng: 24.353773
+    },
+
+    "statia2": {
+        lat: 44.111704,
+        lng: 24.351611
+    },
+
+    "statia1": {
+        lat: 44.113206,
+        lng: 24.351021
+    },
+
+    "statia3": {
+        lat: 44.111792,
+        lng: 24.348703
+    },
+
+    "targu_vechi": {
+        lat: 44.115156,
+        lng: 24.346476
+    },
+
+    "elena_doamna": {
+        lat: 44.107382,
+        lng: 24.328650
+    },
+
+    "rezi": {
+        lat: 44.107616,
+        lng: 24.343596
+    },
+
+    "parc": {
+        lat: 44.112150,
+        lng: 24.344123
+    }
+
+};
+
+
+let markerStatie;
+
+
+document.querySelectorAll(".statie").forEach(statie => {
+
+    statie.onclick = function(){
+
+        let nume = this.querySelector("h3").innerText;
+
+
+        let locatie = statii[nume];
+
+
+        if(locatie){
+
+            if(markerStatie){
+                map.removeLayer(markerStatie);
+            }
+
+
+            markerStatie = L.marker([
+                locatie.lat,
+                locatie.lng
+            ])
+            .addTo(map)
+            .bindPopup("🚕 Stația " + nume)
+            .openPopup();
+
+
+            map.setView([
+                locatie.lat,
+                locatie.lng
+            ],16);
+
+
+        } else {
+
+            alert("Nu avem coordonate pentru stația " + nume);
+
+        }
+
+    }
+
+});
+// AFISARE MASINI IN STATII
+
+const socket = io();
+
+socket.on("actualizare_statii", function(date){
+
+    console.log("AM PRIMIT:", date);
+
+    if(!date){
+        console.log("DATE STATII GOALE");
+        return;
+    }
+
+    let statii = date.statii || {};
+    let timpuri = date.timpuri || {};
+
+    console.log("AM PRIMIT:", JSON.stringify(statii));
+
+    document.querySelectorAll(".statie").forEach(function(cutie){
+
+        let nume = cutie.querySelector("h3").innerText;
+
+        let zona = cutie.querySelector(".masini");
+
+        zona.innerHTML = "";
+
+        let cod = nume
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replaceAll(" ","_");
+
+        if(statii[cod]){
+
+            statii[cod].forEach(function(masina,index){
+
+                let div = document.createElement("div");
+
+                div.className="masina";
+
+                div.innerHTML = `
+                    🚕 ${masina}
+                    <br>
+                    <small>Locul ${index + 1}</small>
+                `;
+
+                div.onclick = function(){
+
+                    let cheia = cod + "_" + masina;
+
+                    let intrare = timpuri[cheia];
+
+                    if(intrare){
+
+                        let minute = Math.floor(
+                            (Date.now() - intrare) / 60000
+                        );
+
+                        alert(
+                            "🚕 Mașina " + masina +
+                            "\n📍 Stația: " + nume +
+                            "\n⏱ Stă de " + minute + " minute"
+                        );
+
+                    } else {
+
+                        alert("Nu există timpul pentru această mașină");
+
+                    }
+
+                };
+
+                zona.appendChild(div);
+
+            });
+
+        }
+
+    });
+
+});
+
+socket.on("connect", ()=>{
+    console.log("DISPECERAT CONECTAT", socket.id);
+});
+// TRIMITERE COMANDA DISPECERAT
+
+document.getElementById("trimite").onclick = function(){
+
+    let adresa = document.getElementById("adresa").value;
+    let destinatie = document.getElementById("destinatie").value;
+    let telefon = document.getElementById("telefon").value;
+    let observatii = document.getElementById("observatii").value;
+
+
+    fetch("/adauga", {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            plecare: adresa,
+            destinatie: destinatie,
+            telefon: telefon,
+            observatii: observatii
+
+        })
+
+    })
+    .then(r => r.text())
+    .then(r => {
+
+        console.log("RASPUNS SERVER:", r);
+        location.reload();
+
+    });
+
+};
+socket.on("lista_comenzi", function(comenzi){
+
+    const active=document.getElementById("comenziActive");
+    const istoric=document.getElementById("istoricComenzi");
+
+    active.innerHTML="";
+    istoric.innerHTML="";
+
+let nrActive = 0;
+let nrIstoric = 0;
+
+
+
+    comenzi.forEach(function(c,i){
+
+        let card=document.createElement("div");
+
+        card.className="cardComanda";
+
+        card.innerHTML=`
+            <div class="cardTitlu">
+                🚖 #${i}
+            </div>
+
+            <div>
+                📍 ${c.plecare}
+            </div>
+
+            <div class="cardStatus">
+                ${c.status}
+            </div>
+        `;
+
+        card.onclick=function(){
+
+            document.getElementById("fundalDetalii").style.display="block";
+            document.getElementById("detaliiComanda").style.display="block";
+
+            document.getElementById("continutDetalii").innerHTML=`
+
+<b>📍 Plecare</b><br>
+${c.plecare}<br><br>
+
+<b>🏁 Destinație</b><br>
+${c.destinatie||"-"}<br><br>
+
+<b>🚖 Șofer</b><br>
+${c.indicativ||"-"}<br><br>
+<b>🕒 Ora acceptării</b><br>
+${c.oraAcceptare||"-"}<br><br>
+
+<b>📞 Telefon</b><br>
+${c.telefon||"-"}<br><br>
+
+<b>📝 Observații</b><br>
+${c.observatii||"-"}<br><br>
+
+<b>📌 Status</b><br>
+${c.status}
+
+            `;
+
+        };
+
+if(
+    c.status==="FINALIZATA" ||
+    c.status==="ANULATA"
+){
+
+    nrIstoric++;
+    istoric.prepend(card);
+
+}else{
+
+    nrActive++;
+     active.prepend(card);
+
+}
+
+    });
+            document.getElementById("nrActive").innerText = nrActive;
+            document.getElementById("nrIstoric").innerText = nrIstoric;
+});
+
+// COMENZI ACTIVE
+
+document.getElementById("btnActive").onclick = function () {
+
+    const lista = document.getElementById("comenziActive");
+
+    if (lista.style.display === "none" || lista.style.display === "") {
+        lista.style.display = "block";
+    } else {
+        lista.style.display = "none";
+    }
+
+};
+
+document.getElementById("btnIstoric").onclick = function () {
+
+    const lista = document.getElementById("istoricComenzi");
+
+    if (lista.style.display === "none" || lista.style.display === "") {
+        lista.style.display = "block";
+    } else {
+        lista.style.display = "none";
+    }
+
+};
+
+
+
+// ÎNCHIDE DIN BUTON
+
+document.getElementById("inchideDetalii").onclick = function () {
+
+    document.getElementById("fundalDetalii").style.display = "none";
+    document.getElementById("detaliiComanda").style.display = "none";
+
+};
+
+
+// ACTIVITATE LIVE AUTOMATA
+
+socket.on("activitate_live", function(date){
+
+    console.log("ACTIVITATE LIVE:", date);
+
+    adaugaActivitate(
+        date.titlu || "📡 EVENIMENT",
+        date.adresa || "",
+        date.mesaj || ""
+    );
+
+});
+
+function adaugaActivitate(titlu, adresa, mesaj){
+
+    const container = document.getElementById("activitateLive");
+
+    if(!container) return;
+
+    const card = document.createElement("div");
+    card.className = "eveniment";
+
+    card.innerHTML = `
+        <strong>${titlu}</strong><br>
+        📍 ${adresa}<br>
+        🚖 ${mesaj}
+    `;
+
+    container.prepend(card);
+
+    while(container.children.length > 100){
+        container.removeChild(container.lastChild);
+    }
+
+}
+adaugaActivitate(
+    "🆕 Comanda #188",
+    "Petre Puican 70",
+    "Preluată de 88"
+);
+
+adaugaActivitate(
+    "✅ Comanda #187",
+    "Bistriței 70",
+    "Finalizată de 3456"
+);
+
+
+document.getElementById("btnSoferi").onclick = function () {
+
+    const lista = document.getElementById("meniulSoferi");
+
+    if (lista.style.display === "none" || lista.style.display === "") {
+        lista.style.display = "block";
+    } else {
+        lista.style.display = "none";
+    }
+
+};
+
+
+
+document.querySelector("#meniulSoferi button:nth-child(1)").onclick = function(){
+
+    document.getElementById("fereastraParola").style.display="block";
+
+};
+
+
+document.getElementById("salveazaParola").onclick=function(){
+
+    let indicativ=document.getElementById("indicativParola").value;
+    let parola=document.getElementById("parolaNoua").value;
+
+    fetch("/schimba-parola-sofer",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            indicativ:indicativ,
+            parolaNoua:parola
+        })
+    })
+    .then(r=>r.text())
+    .then(r=>{
+        alert("Parola schimbata");
+        document.getElementById("fereastraParola").style.display="none";
+    });
+
+};
+
+
+
+window.addEventListener("load", function(){
+
+    const butonParola = document.getElementById("btnSchimbaParola");
+
+    if(butonParola){
+
+        butonParola.onclick = function(){
+
+            document.getElementById("fereastraParola").style.display="block";
+
+        };
+
+    }
+
+});
+
+
+
+document.getElementById("salveazaParola").onclick=function(){
+
+    let indicativ=document.getElementById("indicativParola").value;
+    let parola=document.getElementById("parolaNoua").value;
+
+    fetch("/schimba-parola-sofer",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            indicativ:indicativ,
+            parolaNoua:parola
+        })
+    })
+    .then(r=>r.json())
+    .then(r=>{
+
+        if(r.ok){
+
+            alert("✅ Parola schimbata");
+
+            document.getElementById("fereastraParola").style.display="none";
+            document.getElementById("indicativParola").value="";
+            document.getElementById("parolaNoua").value="";
+
+        }else{
+
+            alert("❌ Nu s-a schimbat");
+
+        }
+
+    });
+
+};
+
+
+
+document.getElementById("btnPedepse").onclick=function(){
+
+    document.getElementById("fereastraPedepse").style.display="block";
+
+};
+
+
+document.getElementById("aplicaPedeapsa").onclick=function(){
+
+fetch("/restrictie-sofer",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+indicativ:document.getElementById("indicativPedeapsa").value,
+activ:0,
+motiv:document.getElementById("motivPedeapsa").value,
+durata:document.getElementById("durataPedeapsa").value
+})
+})
+.then(r=>r.json())
+.then(r=>{
+if(r.ok){
+
+    alert("🚫 Șofer restricționat");
+
+    document.getElementById("indicativPedeapsa").value="";
+    document.getElementById("motivPedeapsa").value="";
+    document.getElementById("durataPedeapsa").selectedIndex=0;
+
+}
+});
+
+};
+
+
+document.getElementById("deblocheazaSofer").onclick=function(){
+
+fetch("/restrictie-sofer",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+indicativ:document.getElementById("indicativPedeapsa").value,
+activ:1
+})
+})
+.then(r=>r.json())
+.then(r=>{
+if(r.ok) alert("✅ Șofer deblocat");
+});
+
+};
+
+
+
+
+document.getElementById("btnInfoSoferi").onclick=function(){
+
+    window.location.href="/infosoferi";
+
+};
+

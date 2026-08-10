@@ -1,0 +1,688 @@
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --dark:#0b1220;
+    --dark2:#111827;
+    --panel:#ffffff;
+    --bg:#eef2f7;
+    --border:#d9e2ec;
+    --blue:#2563eb;
+    --blue2:#1d4ed8;
+    --green:#16a34a;
+    --red:#dc2626;
+    --orange:#f59e0b;
+    --text:#172033;
+    --muted:#64748b;
+    --shadow:0 8px 25px rgba(15,23,42,.09);
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at top left,#f8fbff 0,#eef2f7 45%,#e8eef6 100%);
+    color:var(--text);
+}
+
+body{
+    overflow-x:hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header{
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 24px;
+    background:linear-gradient(135deg,#080f1c,#172033);
+    color:white;
+    box-shadow:0 5px 20px rgba(0,0,0,.20);
+    position:relative;
+    z-index:1000;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:900;
+    letter-spacing:.4px;
+}
+
+.titlu{
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:1.5px;
+    color:#dbeafe;
+}
+
+/* =========================================================
+   LAYOUT DISPECERAT
+========================================================= */
+
+main{
+    width:100%;
+    display:grid;
+    grid-template-columns:310px minmax(0,1fr) 310px;
+    gap:16px;
+    padding:16px;
+    min-height:calc(100vh - 72px);
+}
+
+/* coloana stanga */
+
+.coloana-stanga{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-width:0;
+}
+
+/* =========================================================
+   PANOURI
+========================================================= */
+
+.panou{
+    background:rgba(255,255,255,.97);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:16px;
+    box-shadow:var(--shadow);
+}
+
+.panou h2{
+    font-size:18px;
+    font-weight:900;
+    margin-bottom:14px;
+    color:#111827;
+}
+
+/* =========================================================
+   COMANDA NOUA
+========================================================= */
+
+.panou.comanda{
+    border-top:4px solid var(--blue);
+}
+
+.panou.comanda h2{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+input,
+textarea{
+    width:100%;
+    border:1px solid #cfd9e5;
+    border-radius:11px;
+    background:#fbfdff;
+    color:#111827;
+    padding:13px;
+    margin-bottom:10px;
+    font-size:15px;
+    outline:none;
+    transition:.18s;
+}
+
+input:focus,
+textarea:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+    background:white;
+}
+
+button{
+    width:100%;
+    border:none;
+    border-radius:11px;
+    padding:13px 15px;
+    min-height:46px;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.15s ease;
+    box-shadow:0 3px 8px rgba(15,23,42,.12);
+}
+
+button:hover{
+    filter:brightness(1.05);
+    transform:translateY(-1px);
+}
+
+button:active{
+    transform:scale(.985);
+}
+
+#butonManual{
+    background:linear-gradient(135deg,#475569,#334155);
+    color:white;
+    margin-bottom:9px;
+}
+
+#trimite{
+    background:linear-gradient(135deg,var(--green),#15803d);
+    color:white;
+}
+
+/* =========================================================
+   COMENZI
+========================================================= */
+
+.folderComenzi{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    min-height:58px;
+    padding:0 16px;
+    background:linear-gradient(135deg,var(--blue),var(--blue2));
+    color:white;
+    border-radius:14px;
+    font-size:15px;
+}
+
+.folderComenzi span{
+    min-width:34px;
+    height:30px;
+    padding:0 9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:white;
+    color:var(--blue2);
+    border-radius:30px;
+    font-size:14px;
+    font-weight:900;
+}
+
+#comenziActive,
+#istoricComenzi{
+    margin-top:12px;
+}
+
+.cardComanda{
+    background:linear-gradient(145deg,#fff,#f8fafc);
+    border:1px solid var(--border);
+    border-left:5px solid var(--green);
+    border-radius:13px;
+    padding:13px;
+    margin-bottom:9px;
+    box-shadow:0 4px 12px rgba(15,23,42,.06);
+}
+
+.cardTitlu{
+    font-size:15px;
+    font-weight:900;
+    margin-bottom:7px;
+}
+
+.cardStatus{
+    color:var(--green);
+    font-weight:900;
+    font-size:13px;
+    margin-top:7px;
+}
+
+/* =========================================================
+   HARTA
+========================================================= */
+
+.panou.harta{
+    padding:8px;
+    min-width:0;
+}
+
+#map{
+    width:100%;
+    height:calc(100vh - 104px);
+    min-height:560px;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(15,23,42,.15);
+}
+
+/* =========================================================
+   ACTIVITATE LIVE
+========================================================= */
+
+.panou.activitate{
+    margin-top:14px;
+}
+
+.titluLive{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+#activitateLive{
+    max-height:270px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:9px;
+    font-size:13px;
+}
+
+#activitateLive *{
+    font-size:13px !important;
+}
+
+/* =========================================================
+   STATII
+========================================================= */
+
+#statii{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+}
+
+.statie{
+    background:linear-gradient(145deg,#fff,#f8fafc);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:12px;
+    transition:.16s ease;
+}
+
+.statie:hover{
+    border-color:#b8c7da;
+    box-shadow:0 6px 17px rgba(15,23,42,.08);
+    transform:translateY(-1px);
+}
+
+.statie h3{
+    text-align:center;
+    font-size:14px;
+    font-weight:900;
+    color:#1e293b;
+    margin-bottom:10px;
+    letter-spacing:.3px;
+}
+
+.masini{
+    min-height:40px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    max-height:145px;
+    overflow-y:auto;
+}
+
+.masina{
+    width:61px;
+    min-width:61px;
+    height:42px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:3px;
+    background:linear-gradient(145deg,#2563eb,#1d4ed8);
+    color:white;
+    border-radius:11px;
+    font-size:11px;
+    font-weight:900;
+    line-height:13px;
+    box-shadow:0 3px 8px rgba(37,99,235,.22);
+}
+
+.masina small{
+    font-size:9px;
+    opacity:.85;
+}
+
+/* =========================================================
+   MODALE
+========================================================= */
+
+.fereastra,
+#fereastraSofer,
+#detaliiComanda{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    color:#111827;
+    border:1px solid #dbe3ee;
+    border-radius:20px;
+    padding:24px;
+    z-index:9999;
+    width:400px;
+    max-width:92%;
+    max-height:88vh;
+    overflow-y:auto;
+    box-shadow:0 25px 70px rgba(15,23,42,.30);
+}
+
+#detaliiComanda{
+    width:460px;
+}
+
+#fundalDetalii{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(2,6,23,.58);
+    z-index:9998;
+}
+
+#inchideDetalii{
+    margin-top:18px;
+    background:var(--blue);
+    color:white;
+}
+
+#fereastraSofer{
+    text-align:center;
+}
+
+#fereastraSofer h2{
+    font-size:21px;
+    margin-bottom:15px;
+}
+
+/* =========================================================
+   STATII / ACTIUNI SPECIALE
+========================================================= */
+
+#alegereStatii{
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:13px;
+    margin-top:10px;
+}
+
+#alegereStatii h3{
+    margin-bottom:8px;
+}
+
+#alegereStatii label{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-height:36px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+#alegereStatii input[type="checkbox"]{
+    width:20px;
+    height:20px;
+    margin:0;
+}
+
+#salveazaStatii{
+    margin-top:12px;
+    background:var(--green);
+    color:white;
+}
+
+/* =========================================================
+   BUTON MANUAL / ALARMA
+========================================================= */
+
+.butonManualNormal{
+    background:#475569;
+    color:white;
+}
+
+.butonManualAlarma{
+    background:var(--red) !important;
+    color:white !important;
+    animation:clipireButon 1s infinite;
+}
+
+@keyframes clipireButon{
+    0%,100%{opacity:1}
+    50%{opacity:.45}
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+*{
+    scrollbar-width:thin;
+    scrollbar-color:#94a3b8 transparent;
+}
+
+*::-webkit-scrollbar{
+    width:7px;
+    height:7px;
+}
+
+*::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+*::-webkit-scrollbar-thumb{
+    background:#94a3b8;
+    border-radius:20px;
+}
+
+/* =========================================================
+   TELEFON
+========================================================= */
+
+@media(max-width:900px){
+
+    header{
+        height:62px;
+        padding:0 14px;
+    }
+
+    .logo{
+        font-size:17px;
+    }
+
+    .titlu{
+        font-size:12px;
+        letter-spacing:.8px;
+    }
+
+    main{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        padding:10px;
+        min-height:auto;
+    }
+
+    .panou.harta{
+        order:1;
+        padding:5px;
+    }
+
+    #map{
+        height:52vh;
+        min-height:330px;
+        border-radius:14px;
+    }
+
+    .coloana-stanga{
+        order:2;
+    }
+
+    .coloana-stanga,
+    .panou.activitate,
+    main > section:not(.harta){
+        width:100%;
+    }
+
+    .panou{
+        border-radius:16px;
+        padding:13px;
+    }
+
+    .panou h2{
+        font-size:17px;
+    }
+
+    input,
+    textarea{
+        min-height:48px;
+        font-size:16px;
+    }
+
+    button{
+        min-height:50px;
+        font-size:15px;
+    }
+
+    #statii{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:8px;
+    }
+
+    .statie{
+        padding:10px;
+    }
+
+    .statie h3{
+        font-size:12px;
+    }
+
+    .masina{
+        width:58px;
+        min-width:58px;
+        height:40px;
+        font-size:10px;
+    }
+
+    .folderComenzi{
+        min-height:54px;
+    }
+
+    .panou.activitate{
+        order:4;
+        margin-top:0;
+    }
+
+    #activitateLive{
+        max-height:250px;
+    }
+
+    .fereastra,
+    #fereastraSofer,
+    #detaliiComanda{
+        width:calc(100% - 22px);
+        max-width:none;
+        padding:18px;
+        border-radius:18px;
+    }
+}
+
+/* =========================================================
+   TELEFON MIC
+========================================================= */
+
+@media(max-width:500px){
+
+    html,
+    body{
+        background:#eef2f7;
+    }
+
+    header{
+        height:56px;
+        padding:0 11px;
+    }
+
+    .logo{
+        font-size:15px;
+    }
+
+    .titlu{
+        font-size:11px;
+    }
+
+    main{
+        padding:7px;
+    }
+
+    #map{
+        height:46vh;
+        min-height:290px;
+    }
+
+    #statii{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .masini{
+        max-height:110px;
+    }
+
+    .masina{
+        width:54px;
+        min-width:54px;
+        height:38px;
+        border-radius:10px;
+    }
+
+    .folderComenzi{
+        font-size:14px;
+    }
+
+    .cardComanda{
+        padding:11px;
+    }
+}
+
+/* =========================================================
+   TELEFON FOARTE MIC
+========================================================= */
+
+@media(max-width:380px){
+
+    .logo{
+        font-size:14px;
+    }
+
+    .titlu{
+        font-size:10px;
+    }
+
+    main{
+        padding:6px;
+    }
+
+    #map{
+        min-height:270px;
+    }
+
+    .panou{
+        padding:11px;
+    }
+
+    #statii{
+        gap:6px;
+    }
+
+    .statie{
+        padding:8px;
+    }
+
+    .masina{
+        width:50px;
+        min-width:50px;
+        height:36px;
+        font-size:9px;
+    }
+}

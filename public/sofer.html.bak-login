@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<title>Sofer Taxi</title>
+</head>
+
+<body style="margin:0;overflow:hidden;">
+<div id="map" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:1;
+"></div>
+<h2>Sofer Taxi</h2>
+<p>Asteptati comenzi...</p>
+
+<div id="oferta" style="
+display:none;
+position:fixed;
+left:10px;
+right:10px;
+bottom:10px;
+background:rgba(20,20,20,.85);
+color:white;
+padding:20px;
+border-radius:20px;
+z-index:999;
+"> style="display:none;border:2px solid red;padding:15px;margin-top:20px;background:#ffffcc;">
+
+<div id="panouOferta">
+
+<h3>🚖 COMANDĂ NOUĂ</h3>
+
+<p><b>📍 Plecare:</b> <span id="plecare"></span></p>
+
+<p><b>🏁 Destinație:</b> <span id="destinatie"></span></p>
+
+<p><b>⏳ Timp rămas:</b> <span id="cronometru">15</span> secunde</p>
+
+<button id="accepta">🟢 Acceptă</button>
+
+<button id="refuza">🔴 Refuză</button>
+
+</div>
+
+
+
+<div id="panouCursa" style="display:none;">
+
+<h3 id="titluCursa">🚖 CURSĂ ACCEPTATĂ</h3>
+
+<p><b>📍 Plecare:</b> <span id="plecare2"></span></p>
+
+<p><b>🏁 Destinație:</b> <span id="destinatie2"></span></p>
+
+<br>
+
+<button id="googleMaps">🟢 Google Maps</button>
+
+<button id="waze">🟣 Waze</button>
+
+<button id="laClient">✅ La client</button>
+<button id="clientAbsent" style="display:block;">
+❌ CLIENTUL NU A VENIT
+</button>
+
+<button id="renunta">❌ Renunță</button>
+
+</div>
+
+</div>
+
+<script>
+
+const map = L.map('map',{
+    zoomControl:false,
+    attributionControl:false
+}).setView([44.435,24.371],13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19
+}).addTo(map);
+
+</script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+let comandaCurenta = null;
+let timer = null;
+let stareCursa = "ACCEPTATA";
+
+
+
+const alarma = new Audio("/Alerta/freesound_community-beep-beep-beep-beep-80262.mp3");
+
+alarma.loop = true;
+
+let indicativ = localStorage.getItem("indicativ");
+
+if (!indicativ) {
+    indicativ = prompt("Introdu indicativul masinii");
+    localStorage.setItem("indicativ", indicativ);
+}
+
+socket.on("connect", () => {
+    socket.emit("identificare", indicativ);
+});
+
+function trimiteLocatia(){
+
+    navigator.geolocation.getCurrentPosition((pozitie)=>{
+
+        fetch("/locatie-sofer",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                indicativ:indicativ,
+                lat:pozitie.coords.latitude,
+                lng:pozitie.coords.longitude
+            })
+
+        })
+
+        .then(r=>r.json())
+
+        .then(r=>{
+
+            if(r.actiune==="INTRARE_STATIE"){
+
+                if(confirm("Ati ajuns in statia "+r.statie+". Intrati la rand?")){
+
+                    fetch("/intra-in-statie",{
+
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+
+                        body:JSON.stringify({
+                            indicativ:indicativ,
+                            statie:r.statie
+                        })
+
+                    });
+
+                }
+
+            }
+
+            if(r.actiune==="IESIRE_STATIE"){
+
+                alert("Ati iesit din statia "+r.statie);
+
+            }
+
+        });
+
+    });
+
+}
+
+trimiteLocatia();
+
+setInterval(trimiteLocatia,10000);
+
+socket.on("comanda_noua",(comanda)=>{
+
+    alarma.currentTime = 0;
+alarma.play()
+.then(() => {
+    console.log("SUNET PORNIT");
+})
+.catch((err) => {
+    console.log("EROARE SUNET:", err);
+});
+    comandaCurenta = comanda;
+
+    document.getElementById("plecare").innerText = comanda.plecare;
+    document.getElementById("destinatie").innerText = comanda.destinatie;
+    document.getElementById("oferta").style.display = "block";
+
+document.getElementById("panouOferta").style.display = "block";
+document.getElementById("panouCursa").style.display = "none";
+
+    let secunde = 15;
+    document.getElementById("cronometru").innerText = secunde;
+
+    if(timer){
+        clearInterval(timer);
+    }
+
+    timer = setInterval(()=>{
+
+        secunde--;
+
+        document.getElementById("cronometru").innerText = secunde;
+
+        if(secunde<=0){
+
+            clearInterval(timer);
+
+alarma.pause();
+alarma.currentTime = 0;
+
+            document.getElementById("oferta").style.display="none";
+
+        }
+
+    },1000);
+
+});
+
+document.getElementById("accepta").onclick = function () {
+
+    clearInterval(timer);
+
+    alarma.pause();
+    alarma.currentTime = 0;
+
+    fetch("/accepta-automat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            indicativ: indicativ,
+            id: comandaCurenta.id
+        })
+    })
+    .then(r => r.json())
+.then(() => {
+
+    document.getElementById("panouOferta").style.display = "none";
+    document.getElementById("panouCursa").style.display = "block";
+
+    document.getElementById("plecare2").innerText = comandaCurenta.plecare;
+    document.getElementById("destinatie2").innerText = comandaCurenta.destinatie;
+stareCursa = "ACCEPTATA";
+});
+
+};
+
+document.getElementById("refuza").onclick=function(){
+
+    clearInterval(timer);
+
+alarma.pause();
+alarma.currentTime = 0;
+
+    document.getElementById("oferta").style.display="none";
+
+    fetch("/refuza-automat",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            indicativ:indicativ,
+            id:comandaCurenta.id
+        })
+    });
+
+};
+
+document.getElementById("googleMaps").onclick = function () {
+
+    window.open(
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(comandaCurenta.plecare),
+        "_blank"
+    );
+
+};
+
+document.getElementById("waze").onclick = function () {
+
+    window.open(
+        "https://waze.com/ul?q=" +
+        encodeURIComponent(comandaCurenta.plecare),
+        "_blank"
+    );
+
+};
+document.getElementById("renunta").onclick = function () {
+
+    if (!confirm("Sigur dorești să renunți la cursă?")) {
+        return;
+    }
+
+    document.getElementById("panouCursa").style.display = "none";
+    document.getElementById("panouOferta").style.display = "block";
+    document.getElementById("oferta").style.display = "none";
+
+    alert("Ai renunțat la cursă.");
+
+};
+document.getElementById("laClient").onclick = function () {
+
+    if (stareCursa === "ACCEPTATA") {
+
+        fetch("/la-client", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                indicativ: indicativ,
+                id: comandaCurenta.id
+            })
+        })
+        .then(r => r.json())
+        .then(() => {
+
+    stareCursa = "LA_CLIENT";
+
+    document.getElementById("titluCursa").innerText = "🚖 LA CLIENT";
+    document.getElementById("laClient").innerText = "▶ În cursă";
+
+    document.getElementById("clientAbsent").style.display = "block";
+
+});
+
+        return;
+    }
+
+    if (stareCursa === "LA_CLIENT") {
+
+        fetch("/in-cursa", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                indicativ: indicativ,
+                id: comandaCurenta.id
+            })
+        })
+        .then(r => r.json())
+        .then(() => {
+
+            stareCursa = "IN_CURSA";
+
+            document.getElementById("titluCursa").innerText = "🚖 ÎN CURSĂ";
+            document.getElementById("laClient").innerText = "🏁 Finalizată";
+
+        });
+
+        return;
+    }
+
+    if (stareCursa === "IN_CURSA") {
+
+        fetch("/finalizata", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                indicativ: indicativ,
+                id: comandaCurenta.id
+            })
+        })
+        .then(r => r.json())
+        .then(() => {
+
+            stareCursa = null;
+            comandaCurenta = null;
+
+            document.getElementById("panouCursa").style.display = "none";
+            document.getElementById("oferta").style.display = "none";
+
+            document.getElementById("titluCursa").innerText = "🚖 CURSĂ ACCEPTATĂ";
+            document.getElementById("laClient").innerText = "✅ La client";
+
+            alert("Cursa a fost finalizată.");
+
+        });
+
+        return;
+    }
+
+};
+
+socket.on("anuleaza_comanda",()=>{
+
+    clearInterval(timer);
+
+alarma.pause();
+alarma.currentTime = 0;
+
+document.getElementById("oferta").style.display="none";
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,3868 @@
+const express = require("express");
+const fs = require("fs");
+const http = require("http");
+const { Server } = require("socket.io");
+const db = require("./database");
+const programStatii = require("./program-statii");
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({extended:true}));
+const server = http.createServer(app);
+const io = new Server(server);
+
+// ===============================
+// SCHIMBARE PAROLA SOFER
+// ===============================
+app.post("/schimba-parola-sofer",(req,res)=>{
+
+    const {indicativ, parolaNoua}=req.body;
+
+    if(!indicativ || !parolaNoua){
+        return res.json({
+            ok:false,
+            mesaj:"Date incomplete"
+        });
+    }
+
+    db.run(
+        "UPDATE soferi SET parola=? WHERE indicativ=?",
+        [parolaNoua, indicativ],
+        function(err){
+
+            if(err){
+                console.log(err);
+                return res.json({
+                    ok:false,
+                    mesaj:"Eroare baza de date"
+                });
+            }
+
+            if(this.changes===0){
+                return res.json({
+                    ok:false,
+                    mesaj:"Sofer inexistent"
+                });
+            }
+
+            res.json({
+                ok:true,
+                mesaj:"Parola schimbata cu succes"
+            });
+
+        }
+    );
+
+});
+
+
+
+let socketSoferi = {};
+let prioritateComanda = null;
+
+io.on("connection", (socket) => {
+
+socket.emit(
+      "actualizare_statii",
+      {
+        statii: randStatii,
+        timpuri: timpStatii,
+        soferiGPS: stareSoferi
+      }
+  );
+socket.emit(
+        "lista_comenzi",
+        comenzi
+    );
+
+socket.emit(
+    "istoric_activitate_live",
+    activitateLive
+);
+
+socket.on("identificare", (date) => {
+
+    db.get(
+        "SELECT * FROM soferi WHERE indicativ=? AND parola=?",
+        [date.indicativ, date.parola],
+
+        (err, sofer) => {
+
+            if (err) {
+                console.log(err);
+                socket.emit("login_eroare", "Eroare baza de date");
+                return;
+            }
+
+            if (!sofer) {
+                socket.emit("login_eroare", "Indicativ sau parola gresita");
+                return;
+            }
+
+            socketSoferi[sofer.indicativ] = socket.id;
+
+            console.log(
+                "SOFER CONECTAT:",
+                sofer.indicativ,
+                socket.id
+            );
+
+            socket.emit("login_ok", sofer);
+
+        }
+
+    );
+
+});
+
+  socket.on("cerere_statii", () => {
+
+    socket.emit(
+      "actualizare_statii",
+      {
+        statii: randStatii,
+        timpuri: timpStatii,
+        soferiGPS: stareSoferi
+      }
+    );
+
+  });
+
+
+});
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use("/Alerta", express.static("Alerta"));
+app.use(express.static("public"));
+
+let comenzi = [];
+let locatieSofer = null;
+let stareSoferi = {};
+let ultimaActivitate = {};
+let ofertaCurenta = {};
+let listaOferte = {};
+
+let randStatii = {};
+let statiePlecareSofer = {};
+let timpStatii = {};
+
+// Raspunsul fiecarui sofer la intrebarea de inchidere
+// NEINTREBAT / RAMANE / PLEACA
+let raspunsuriInchidereStatii = {};
+let refuzuriConsecutive = {};
+
+// Memoram daca soferul a fost deja anuntat ca statia este inchisa.
+// Evita afisarea mesajului de mii de ori la fiecare actualizare GPS.
+let statiiInchiseAnuntate = {};
+
+
+let activitateLive = [];
+
+function trimiteActivitate(titlu, detaliu, status){
+
+    const activitate = {
+        titlu: titlu,
+        detaliu: detaliu,
+        status: status,
+        ora: new Date().toLocaleTimeString("ro-RO")
+    };
+
+    activitateLive.unshift(activitate);
+
+    if(activitateLive.length > 50){
+        activitateLive.pop();
+    }
+
+    io.emit(
+        "activitate_live",
+        activitateLive
+    );
+
+}
+
+
+const statii = {
+
+  hcc: { lat: 44.111158, lng: 24.353773 },
+  statia2: { lat: 44.111704, lng: 24.351611 },
+  statia1: { lat: 44.113206, lng: 24.351021 },
+  statia3: { lat: 44.111792, lng: 24.348703 },
+  targu_vechi: { lat: 44.115156, lng: 24.346476 },
+  elena_doamna: { lat: 44.107382, lng: 24.328650 },
+  rezi: { lat: 44.107616, lng: 24.343596 },
+  parc: { lat: 44.112150, lng: 24.344123 },
+  gara: { lat: 44.119591, lng: 24.364296 },
+  bcr: { lat: 44.116599, lng: 24.351951 }
+
+};
+
+function distanta(lat1, lng1, lat2, lng2) {
+
+  const R = 6371000;
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+
+}
+
+const RAZA_STATIE = 100;
+
+function gasesteStatia(lat, lng) {
+
+  let ceaMaiApropiata = null;
+  let distMin = Infinity;
+
+  for (const nume in statii) {
+
+    const d = distanta(
+      lat,
+      lng,
+      statii[nume].lat,
+      statii[nume].lng
+    );
+
+    if (d < distMin) {
+      distMin = d;
+      ceaMaiApropiata = nume;
+    }
+
+  }
+
+  if (distMin <= RAZA_STATIE) {
+    return ceaMaiApropiata;
+  }
+
+  return null;
+
+}
+try {
+comenzi = JSON.parse(fs.readFileSync("comenzi.json", "utf8"));
+} catch {
+comenzi = [];
+}
+
+function salveazaComenzi() {
+fs.writeFileSync(
+"comenzi.json",
+JSON.stringify(comenzi, null, 2)
+);
+}
+
+function trimiteOferta(idComanda) {
+
+    const oferta = listaOferte[idComanda];
+
+    if (!oferta) return;
+
+    const comanda = comenzi[idComanda];
+
+    if (!comanda) return;
+
+    // =====================================================
+    // FUNCTIE: TRIMITE COMANDA UNUI SOFER
+    // =====================================================
+
+    function trimiteLaSofer(indicativ, motiv) {
+
+        const socketId = socketSoferi[indicativ];
+
+        console.log(
+            "DEBUG TRIMITERE OFERTA:",
+            indicativ,
+            "SOCKET:",
+            socketId
+        );
+
+        if (!socketId) {
+
+            console.log(
+                "SOFER FARA SOCKET:",
+                indicativ
+            );
+
+            return false;
+        }
+
+        console.log(
+            "================================"
+        );
+
+        console.log(
+            "TRIMIT COMANDA:",
+            idComanda
+        );
+
+        console.log(
+            "SOFER:",
+            indicativ
+        );
+
+        console.log(
+            "MOTIV:",
+            motiv
+        );
+
+        console.log(
+            "================================"
+        );
+
+        io.to(socketId).emit("comanda_noua", {
+            id: idComanda,
+            plecare: comanda.plecare,
+            destinatie: comanda.destinatie,
+            telefon: comanda.telefon || "",
+            avertizareRefuzuri: (refuzuriConsecutive[indicativ] || 0) >= 3
+                ? "⚠️ ATENȚIE\\n" + (refuzuriConsecutive[indicativ] || 0) + " refuzuri consecutive.\\nVă rugăm să respectați regulamentul și să răspundeți comenzilor."
+                : null
+        });
+
+        return true;
+    }
+
+
+    // =====================================================
+    // CAUTAM DIN NOU PRIMA STATIE
+    // =====================================================
+
+    function cautaDinPrimaStatie() {
+
+        const primaStatie = oferta.primaStatie;
+
+        if (!primaStatie) {
+
+            console.log(
+                "NU EXISTA PRIMA STATIE PENTRU COMANDA:",
+                idComanda
+            );
+
+            return null;
+        }
+
+        console.log(
+            "VERIFIC DIN NOU PRIMA STATIE:",
+            primaStatie
+        );
+
+        if (!randStatii[primaStatie]) {
+            return null;
+        }
+
+        for (const sofer of randStatii[primaStatie]) {
+
+            // Daca soferul a fost deja trimis din statie
+            // pentru aceasta comanda, nu il repetam
+            if (
+                oferta.soferiIncercati &&
+                oferta.soferiIncercati.includes(
+                    String(sofer)
+                )
+            ) {
+                continue;
+            }
+
+            // Daca are comanda activa, nu il alegem
+            let areComandaActiva = false;
+
+            for (const id in comenzi) {
+
+                const c = comenzi[id];
+
+                if (!c) continue;
+
+                if (
+                    String(c.indicativ) === String(sofer) &&
+                    (
+                        c.status === "ACCEPTATA" ||
+                        c.status === "LA_CLIENT" ||
+                        c.status === "IN_CURSA"
+                    )
+                ) {
+                    areComandaActiva = true;
+                    break;
+                }
+            }
+
+            if (areComandaActiva) continue;
+
+            console.log(
+                "SOFER GASIT DIN NOU IN PRIMA STATIE:",
+                sofer
+            );
+
+            return String(sofer);
+        }
+
+        return null;
+    }
+
+
+    // =====================================================
+    // CAUTAM CEL MAI APROPIAT SOFER LIBER
+    // =====================================================
+
+    function cautaSoferLiber() {
+
+        console.log("DEBUG CAUTARE LIBER:", oferta);
+
+        const primaStatie = oferta.primaStatie;
+
+        if (!primaStatie) return null;
+
+        const coordStatie = statii[primaStatie];
+
+        if (!coordStatie) {
+
+            console.log(
+                "NU AM COORDONATE PENTRU PRIMA STATIE:",
+                primaStatie
+            );
+
+            return null;
+        }
+
+        let celMaiApropiat = null;
+        let distantaMinima = Infinity;
+
+        for (const indicativ in stareSoferi) {
+
+            const sofer = stareSoferi[indicativ];
+
+            if (!sofer) continue;
+
+            // =============================================
+            // NU REPETAM SOFERII DEJA INCERCATI DIN LIBER
+            // =============================================
+
+            if (
+                oferta.soferiLiberIncercati &&
+                oferta.soferiLiberIncercati.includes(
+                    String(indicativ)
+                )
+            ) {
+                continue;
+            }
+
+
+            // =============================================
+            // TREBUIE SA AIBA GPS
+            // =============================================
+
+            if (
+                typeof sofer.lat !== "number" ||
+                typeof sofer.lng !== "number" ||
+                !Number.isFinite(sofer.lat) ||
+                !Number.isFinite(sofer.lng)
+            ) {
+                continue;
+            }
+
+
+            // =============================================
+            // NU ALEGEM SOFER AFLAT IN COADA UNEI STATII
+            // =============================================
+
+            let esteInCoada = false;
+
+            for (const statie in randStatii) {
+
+                if (
+                    Array.isArray(randStatii[statie]) &&
+                    randStatii[statie].includes(
+                        String(indicativ)
+                    )
+                ) {
+                    esteInCoada = true;
+                    break;
+                }
+            }
+
+            if (esteInCoada && !oferta.forteazaStatie) {
+                continue;
+            }
+
+
+            // =============================================
+            // NU ALEGEM SOFER CU CURSA ACTIVA
+            // =============================================
+
+            let areComandaActiva = false;
+
+            for (const id in comenzi) {
+
+                const c = comenzi[id];
+
+                if (!c) continue;
+
+                if (
+                    String(c.indicativ) === String(indicativ) &&
+                    (
+                        c.status === "ACCEPTATA" ||
+                        c.status === "LA_CLIENT" ||
+                        c.status === "IN_CURSA"
+                    )
+                ) {
+                    areComandaActiva = true;
+                    break;
+                }
+            }
+
+            if (areComandaActiva) continue;
+
+
+            // =============================================
+            // DISTANTA GPS -> PRIMA STATIE
+            // =============================================
+
+            const d = distanta(
+                sofer.lat,
+                sofer.lng,
+                coordStatie.lat,
+                coordStatie.lng
+            );
+
+            console.log(
+                "SOFER LIBER:",
+                indicativ,
+                "DISTANTA:",
+                d
+            );
+
+            if (d < distantaMinima) {
+
+                distantaMinima = d;
+                celMaiApropiat = String(indicativ);
+
+            }
+
+        }
+
+        if (celMaiApropiat) {
+
+            console.log(
+                "CEL MAI APROPIAT SOFER LIBER:",
+                celMaiApropiat,
+                "DISTANTA:",
+                distantaMinima
+            );
+
+        }
+
+        return celMaiApropiat;
+    }
+
+
+    // =====================================================
+    // INITIALIZARE LISTE
+    // =====================================================
+
+    if (!Array.isArray(oferta.soferiIncercati)) {
+        oferta.soferiIncercati = [];
+    }
+
+    if (!Array.isArray(oferta.soferiLiberIncercati)) {
+        oferta.soferiLiberIncercati = [];
+    }
+
+
+    // =====================================================
+    // 1. INCERCAM SOFERII NORMALI DIN TRASEU
+    // =====================================================
+
+    if (oferta.pozitie < oferta.lista.length) {
+
+        const sofer =
+            String(oferta.lista[oferta.pozitie]);
+
+        oferta.soferiIncercati.push(sofer);
+
+        console.log(
+            "COMANDA TRIMISA LA:",
+            sofer
+        );
+
+        const trimisa =
+            trimiteLaSofer(
+                sofer,
+                "COADA STATIILOR"
+            );
+
+        if (!trimisa) {
+
+            oferta.pozitie++;
+
+            return trimiteOferta(idComanda);
+        }
+
+
+        // Dupa 15 secunde trecem la urmatorul
+        setTimeout(() => {
+
+            if (!listaOferte[idComanda]) return;
+
+            io.to(
+                socketSoferi[sofer]
+            ).emit("anuleaza_comanda");
+
+            oferta.pozitie++;
+
+            trimiteOferta(idComanda);
+
+        }, 10000);
+
+        return;
+    }
+
+
+    // =====================================================
+    // 2. NU MAI AVEM SOFERI DIN TRASEU
+    //    VERIFICAM DIN NOU PRIMA STATIE
+    // =====================================================
+
+    console.log(
+        "NU MAI SUNT SOFERI IN TRASEU."
+    );
+
+    const soferDinStatie =
+        cautaDinPrimaStatie();
+
+    if (soferDinStatie) {
+
+        oferta.soferiIncercati.push(
+            soferDinStatie
+        );
+
+        const trimisa =
+            trimiteLaSofer(
+                soferDinStatie,
+                "REVERIFICARE PRIMA STATIE"
+            );
+
+        if (trimisa) {
+
+            setTimeout(() => {
+
+                if (!listaOferte[idComanda]) return;
+
+                const socket =
+                    socketSoferi[soferDinStatie];
+
+                if (socket) {
+                    io.to(socket).emit(
+                        "anuleaza_comanda"
+                    );
+                }
+
+                trimiteOferta(idComanda);
+
+            }, 10000);
+
+            return;
+        }
+    }
+
+
+    // =====================================================
+    // 3. CAUTAM SOFER LIBER CEL MAI APROPIAT
+    // =====================================================
+
+    console.log(
+        "NU AM GASIT IN PRIMA STATIE."
+    );
+
+    console.log(
+        "CAUT SOFER LIBER CEL MAI APROPIAT DE:",
+        oferta.primaStatie
+    );
+
+    const soferLiber =
+        cautaSoferLiber();
+
+    if (!soferLiber) {
+
+        console.log(
+            "NU EXISTA NICIUN SOFER LIBER DISPONIBIL."
+        );
+
+
+        if(comenzi[idComanda]){
+
+            comenzi[idComanda].status = "REFUZATA_DE_TOTI";
+
+            comenzi[idComanda].mesaj =
+                "Toti soferii au refuzat comanda";
+
+
+            trimiteActivitate(
+                "⚠️ COMANDA REFUZATA DE TOTI",
+                comenzi[idComanda].plecare,
+                "Comanda #" + idComanda
+            );
+
+
+            io.emit(
+                "lista_comenzi",
+                comenzi
+            );
+
+        }
+
+
+        if(listaOferte[idComanda]){
+            listaOferte[idComanda].inchisa = true;
+        }
+
+        delete listaOferte[idComanda];
+
+        console.log(
+            "OFERTA INCHISA DEFINITIV:",
+            idComanda
+        );
+
+        return;
+    }
+
+
+    // Il marcam ca incercat
+    oferta.soferiLiberIncercati.push(
+        soferLiber
+    );
+
+
+    const trimisa =
+        trimiteLaSofer(
+            soferLiber,
+            "SOFER LIBER CEL MAI APROPIAT"
+        );
+
+    if (!trimisa) {
+
+        return trimiteOferta(idComanda);
+    }
+
+
+    // =====================================================
+    // 4. DUPA 15 SECUNDE:
+    //    - verificam iar prima statie
+    //    - apoi cautam ALT SOFER LIBER
+    // =====================================================
+
+    setTimeout(() => {
+
+        if (!listaOferte[idComanda]) return;
+
+        const socket =
+            socketSoferi[soferLiber];
+
+        if (socket) {
+
+            io.to(socket).emit(
+                "anuleaza_comanda"
+            );
+        }
+
+        console.log(
+            "SOFER LIBER NU A ACCEPTAT:",
+            soferLiber
+        );
+
+        console.log(
+            "CAUTAM URMATORUL SOFER..."
+        );
+
+        trimiteOferta(idComanda);
+
+    }, 10000);
+
+}
+
+app.get("/", (req, res) => {
+
+
+
+let listaInformatiiSoferi = "";
+
+db.all("SELECT * FROM soferi ORDER BY indicativ", [], (err, soferi)=>{
+
+if(!err){
+
+soferi.forEach(s=>{
+
+listaInformatiiSoferi += `
+<div style="
+background:#1f2937;
+padding:10px;
+margin:10px;
+border-radius:10px;
+">
+
+<b>🚕 Indicativ:</b> ${s.indicativ}<br>
+<b>👤 Nume:</b> ${s.nume}<br>
+<b>📞 Telefon:</b> ${s.telefon}<br>
+<b>🚗 Mașină:</b> ${s.masina}<br>
+<b>🔢 Număr:</b> ${s.numar_masina}<br>
+
+</div>
+`;
+
+});
+
+}
+
+});
+
+
+let html = `
+<div style="
+background:#111827;
+color:white;
+padding:15px;
+margin:10px;
+border-radius:12px;
+">
+
+<h2>👨‍✈️ ȘOFERI</h2>
+
+<h3>📋 Informații șoferi</h3>
+
+<div id="listaSoferi">
+${listaInformatiiSoferi}
+</div>
+
+<input id="indicativParola" placeholder="Indicativ șofer"
+style="padding:8px;">
+
+<input id="parolaNoua" placeholder="Parola nouă"
+style="padding:8px;">
+
+<button onclick="schimbaParolaSofer()">
+🔑 SALVEAZĂ PAROLA
+</button>
+
+<br><br>
+
+<a href="/infosoferi">
+<button style="
+padding:10px 18px;
+background:#16a34a;
+color:white;
+border:0;
+border-radius:10px;
+font-size:16px;
+">
+📋 INFORMAȚII ȘOFERI
+</button>
+</a>
+
+</div>
+
+<script>
+function schimbaParolaSofer(){
+
+fetch("/schimba-parola-sofer",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+indicativ:document.getElementById("indicativParola").value,
+parolaNoua:document.getElementById("parolaNoua").value
+})
+})
+.then(r=>r.json())
+.then(r=>{
+alert(r.mesaj);
+});
+
+}
+</script>
+
+`;
+
+
+
+comenzi.forEach((cursa, index) => {
+
+
+html += `
+<div style="border:1px solid #ccc;padding:10px;margin:10px;">
+  <h3>Comanda #${index + 1}</h3>
+
+  <p><b>Data:</b> ${cursa.data}</p>
+  <p><b>Ora:</b> ${cursa.ora}</p>
+  <p><b>Telefon:</b> ${cursa.telefon}</p>
+  <p><b>Plecare:</b> ${cursa.plecare}</p>
+  <p><b>Destinatie:</b> ${cursa.destinatie}</p>
+  <p><b>Status:</b> ${cursa.status}</p>
+  <p><b>Sofer:</b> ${cursa.sofer || "-"}</p>
+  <p><b>Indicativ:</b> ${cursa.indicativ || "-"}</p>
+  <p><b>Timp:</b> ${cursa.timp || "-"} minute</p>
+`;
+
+if (cursa.status === "NOUA") {
+  html += `
+  <form method="POST" action="/accepta/${index}">
+    <input name="sofer" placeholder="Sofer" required><br><br>
+    <input name="indicativ" placeholder="Indicativ" required><br><br>
+    <input name="timp" placeholder="Minute" required><br><br>
+    <button>Accepta cursa</button>
+  </form>
+  `;
+}
+
+if (cursa.status === "ACCEPTATA") {
+  html += `
+  <form method="POST" action="/status/${index}/LA_CLIENT">
+    <button>LA CLIENT</button>
+  </form>
+  `;
+}
+
+if (cursa.status === "LA_CLIENT") {
+  html += `
+  <form method="POST" action="/status/${index}/IN_CURSA">
+    <button>IN CURSA</button>
+  </form>
+  `;
+}
+
+if (cursa.status === "IN_CURSA") {
+  html += `
+  <form method="POST" action="/status/${index}/FINALIZATA">
+    <button>FINALIZATA</button>
+  </form>
+  `;
+}
+
+html += "</div>";
+
+
+});
+
+
+res.send(`
+
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+
+<meta charset="utf-8">
+
+<title>Taxi Paradis - Dispecerat</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#eceff1;
+}
+
+header{
+    background:#111827;
+    color:white;
+    padding:20px;
+    text-align:center;
+    font-size:30px;
+    font-weight:bold;
+}
+
+.container{
+    width:95%;
+    max-width:900px;
+    margin:20px auto;
+}
+
+.formular{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    font-size:16px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    box-sizing:border-box;
+}
+
+button{
+    padding:12px 20px;
+    background:#16a34a;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:17px;
+}
+
+button:hover{
+    background:#15803d;
+}
+
+hr{
+    margin:25px 0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+🚖 TAXI PARADIS - DISPECERAT
+</header>
+
+<div class="container">
+
+<div class="formular">
+
+<h2>Adaugă comandă</h2>
+
+<form method="POST" action="/adauga">
+
+<input name="telefon" placeholder="Telefon" required>
+
+<input name="plecare" placeholder="Plecare" required>
+
+<input name="destinatie" placeholder="Destinație" required>
+
+<br><br>
+
+<button type="submit">
+🚖 Adaugă comandă
+</button>
+
+</form>
+
+</div>
+
+<hr>
+
+${html}
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+
+
+<script>
+
+socket.on("actualizare",function(){
+
+location.reload();
+
+});
+
+</script>
+
+</body>
+
+</html>
+
+`);
+
+}); 
+
+
+// ===============================
+// INVATARE ADRESA NOUA
+// ===============================
+
+app.post("/invata-adresa", (req,res)=>{
+
+    console.log("DATE INVATA PRIMITE:", req.body);
+
+    console.log("PRIMIT INVATARE:", req.body);
+
+    const adresa = req.body.adresa;
+    const statiiNoi = req.body.statii;
+
+
+    if(!adresa || !Array.isArray(statiiNoi) || statiiNoi.length !== 3){
+
+        return res.json({
+            ok:false,
+            mesaj:"Date incomplete"
+        });
+
+    }
+
+
+    let bazaAdrese=[];
+
+    try{
+
+        bazaAdrese = JSON.parse(
+            fs.readFileSync(
+                "date/adrese.json",
+                "utf8"
+            )
+        );
+
+    }catch(e){
+
+        bazaAdrese=[];
+
+    }
+
+
+    const exista = bazaAdrese.find(a =>
+        a.adresa.toLowerCase() === adresa.toLowerCase()
+    );
+
+
+    if(!exista){
+
+        bazaAdrese.push({
+
+            adresa: adresa,
+            statii: statiiNoi
+
+        });
+
+
+        fs.writeFileSync(
+            "date/adrese.json",
+            JSON.stringify(
+                bazaAdrese,
+                null,
+                2
+            )
+        );
+
+    }
+
+
+    console.log(
+        "ADRESA INVATATA:",
+        adresa,
+        statiiNoi
+    );
+
+
+    res.json({
+        ok:true
+    });
+
+
+});
+
+
+app.post("/adauga", (req, res) => {
+
+const acum = new Date();
+
+comenzi.push({
+telefon: req.body.telefon,
+plecare: req.body.plecare,
+destinatie: req.body.destinatie,
+data: acum.toLocaleDateString("ro-RO"),
+ora: acum.toLocaleTimeString("ro-RO"),
+status: "NOUA",
+sofer: "",
+indicativ: "",
+timp: ""
+});
+
+salveazaComenzi();
+io.emit("actualizare");
+io.emit("lista_comenzi", comenzi);
+
+trimiteActivitate(
+    "🆕 COMANDĂ NOUĂ",
+    req.body.plecare,
+    "Așteaptă taxi"
+);
+
+// ===============================
+// TRASEU ADRESA + ROTATIE P
+// ===============================
+
+let traseu = [];
+let listaSoferi = [];
+let rotatieP = 0;
+
+const mapaStatii = {
+    "G": "gara",
+    "BCR": "bcr",
+    "S": "spital",
+    "Pa": "parc",
+    "P": "rotativa",
+    "R": "rezi",
+    "HCC": "hcc",
+    "TV": "targu_vechi",
+    "ED": "elena_doamna"
+};
+
+// ===============================
+// BAZA DE ADRESE
+// ===============================
+
+let bazaAdrese = [];
+
+try {
+
+    bazaAdrese = JSON.parse(
+        fs.readFileSync(
+            "date/adrese.json",
+            "utf8"
+        )
+    );
+
+} catch(e) {
+
+    console.log(
+        "EROARE CITIRE date/adrese.json:",
+        e.message
+    );
+
+}
+
+// ===============================
+// CAUTAM ADRESA
+// ===============================
+
+const plecareComanda = String(
+    req.body.plecare || ""
+).trim();
+
+const adresaGasita = bazaAdrese
+    .slice()
+    .sort(
+        (a,b) =>
+        String(b.adresa).length -
+        String(a.adresa).length
+    )
+    .find(a => {
+
+        const nume = String(a.adresa)
+            .trim()
+            .toLowerCase();
+
+        return plecareComanda
+            .toLowerCase()
+            .includes(nume);
+
+    });
+
+if (adresaGasita) {
+
+    traseu = [...adresaGasita.statii];
+
+    console.log(
+        "ADRESA GASITA:",
+        adresaGasita.adresa
+    );
+
+    console.log(
+        "TRASEU ORIGINAL:",
+        traseu
+    );
+
+} else {
+
+    // ===============================
+    // CAUTARE PUNCTE DE REPER
+    // ===============================
+
+    let repere = [];
+
+    try {
+
+        repere = JSON.parse(
+            fs.readFileSync(
+                "date/puncte_reper.json",
+                "utf8"
+            )
+        );
+
+    } catch(e) {
+
+        console.log(
+            "EROARE CITIRE REPERE:",
+            e.message
+        );
+
+    }
+
+
+    const textComanda = plecareComanda
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\\u0300-\\u036f]/g,"");
+
+
+    const reperGasit = repere.find(r =>
+
+        r.aliasuri.some(a =>
+            textComanda.includes(
+                a.toLowerCase()
+            )
+        )
+
+    );
+
+
+    if(reperGasit){
+
+        traseu = [...reperGasit.statii];
+
+        console.log(
+            "REPER GASIT:",
+            reperGasit.adresa
+        );
+
+        console.log(
+            "TRASEU REPER:",
+            traseu
+        );
+
+    } else {
+
+        console.log(
+            "ATENTIE: ADRESA NU EXISTĂ ÎN BAZĂ:",
+            plecareComanda
+        );
+
+        io.emit("zona_necunoscuta", {
+            adresa: plecareComanda,
+            mesaj: "Adresa nu exista in planul dispeceratului"
+        });
+
+        return res.json({
+            ok:false,
+            invatare:true,
+            adresa:plecareComanda,
+            mesaj:"Zona necunoscuta - alegeti 3 statii"
+        });
+
+    }
+
+}
+
+// ===============================
+// ROTATIE P
+// ===============================
+
+if (traseu.includes("P")) {
+
+    const pozitieP = traseu.indexOf("P");
+
+    const statiiRotative = [
+        "statia1",
+        "statia2",
+        "statia3"
+    ];
+
+    const statiaCurenta =
+        statiiRotative[rotatieP % 3];
+
+    traseu.splice(
+        pozitieP,
+        1,
+        statiaCurenta
+    );
+
+    console.log(
+        "ROTATIE P:",
+        statiaCurenta
+    );
+
+    rotatieP++;
+
+}
+
+// ===============================
+// CAUTAM SOFERII
+// ===============================
+
+for (const cod of traseu) {
+
+    let statiiCautate = [];
+
+    let numeStatie = mapaStatii[cod] || cod;
+
+    console.log(
+        "CAUT STATIA:",
+        cod,
+        "=>",
+        numeStatie
+    );
+
+
+    if (cod === "P" || 
+        ["statia1","statia2","statia3"].includes(numeStatie)) {
+
+        statiiCautate = [
+            "statia1",
+            "statia2",
+            "statia3"
+        ];
+
+    } else {
+
+        statiiCautate.push(numeStatie);
+
+    }
+
+
+    for (const statie of statiiCautate) {
+
+        console.log(
+            "VERIFIC RAND:",
+            statie,
+            randStatii[statie]
+        );
+
+
+        if (!randStatii[statie]) {
+            continue;
+        }
+
+
+        for (const sofer of randStatii[statie]) {
+
+            if (!listaSoferi.includes(sofer)) {
+                listaSoferi.push(sofer);
+            }
+
+        }
+
+    }
+
+}
+
+console.log(
+    "LISTA SOFERI:",
+    listaSoferi
+);
+
+// ===============================
+// PRIORITATE EXISTENTA
+// ===============================
+
+if (prioritateComanda) {
+
+    listaSoferi =
+        listaSoferi.filter(
+            s => s !== prioritateComanda
+        );
+
+    listaSoferi.unshift(
+        prioritateComanda
+    );
+
+    console.log(
+        "PRIORITATE:",
+        prioritateComanda
+    );
+
+    prioritateComanda = null;
+}
+
+console.log(
+    "DEBUG TRASEU FINAL:",
+    traseu
+);
+
+console.log(
+    "DEBUG TRASEU FINAL:",
+    traseu
+);
+
+listaOferte[comenzi.length - 1] = {
+    lista: listaSoferi,
+    pozitie: 0,
+
+    // Prima statie este reperul pentru fallback-ul
+    // catre soferii liberi
+    primaStatie:
+        mapaStatii[traseu[0]] || traseu[0],
+
+    soferiIncercati: [],
+    soferiLiberIncercati: []
+};
+
+trimiteOferta(comenzi.length - 1);
+res.json({
+    ok: true,
+    id: comenzi.length - 1
+});
+
+});
+
+
+app.get("/creare-cont",(req,res)=>{
+
+res.send(`
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Creare cont șofer</title>
+</head>
+
+<body style="font-family:Arial;text-align:center;background:#111827;color:white;padding:30px">
+
+<h2>🚖 TAXI PARADIS</h2>
+
+<h3>📝 Creare cont șofer</h3>
+
+<form method="POST" action="/creare-cont">
+
+<input name="indicativ" placeholder="Indicativ" required><br><br>
+
+<input name="nume" placeholder="Nume complet" required><br><br>
+
+<input name="telefon" placeholder="Telefon" required><br><br>
+
+<input name="masina" placeholder="Mașină" required><br><br>
+
+<input name="numar_masina" placeholder="Număr mașină" required><br><br>
+
+<input name="parola" type="password" placeholder="Parolă" required><br><br>
+
+<button style="padding:12px 25px">
+CREEAZĂ CONT
+</button>
+
+</form>
+
+</body>
+</html>
+
+`);
+
+});
+
+
+app.post("/creare-cont",(req,res)=>{
+
+const {
+indicativ,
+nume,
+telefon,
+masina,
+numar_masina,
+parola
+}=req.body;
+
+
+db.run(
+`
+INSERT INTO soferi
+(indicativ,nume,telefon,masina,numar_masina,parola)
+VALUES (?,?,?,?,?,?)
+`,
+[
+indicativ,
+nume,
+telefon,
+masina,
+numar_masina,
+parola
+],
+function(err){
+
+if(err){
+return res.send("❌ Eroare: indicativ existent");
+}
+
+res.send("✅ Cont creat cu succes. Vă puteți loga.");
+
+});
+
+});
+
+
+
+
+app.get("/infosoferi",(req,res)=>{
+
+db.all(
+"SELECT indicativ,nume,telefon,masina,numar_masina,online FROM soferi ORDER BY indicativ",
+[],
+(err,soferi)=>{
+
+if(err){
+return res.send("Eroare baza de date");
+}
+
+let lista="";
+
+soferi.forEach(s=>{
+
+lista += `
+
+<div style="
+background:#111827;
+color:white;
+padding:15px;
+margin:10px;
+border-radius:12px;
+">
+
+<h3>🚕 Indicativ ${s.indicativ}</h3>
+
+👤 Nume: ${s.nume || "-"}<br>
+📞 Telefon: ${s.telefon || "-"}<br>
+🚗 Mașină: ${s.masina || "-"}<br>
+🔢 Număr mașină: ${s.numar_masina || "-"}<br>
+${s.online ? "🟢 ONLINE" : "🔴 OFFLINE"}
+
+</div>
+
+`;
+
+});
+
+
+res.send(`
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Informații șoferi</title>
+</head>
+
+<body style="background:#000;color:white;font-family:Arial;padding:20px">
+
+<h2>👨‍✈️ INFORMAȚII ȘOFERI</h2>
+
+${lista}
+
+<br>
+
+<a href="/dispecerat/index.html">
+<button style="padding:12px">
+⬅ Înapoi dispecerat
+</button>
+</a>
+
+</body>
+</html>
+
+`);
+
+});
+
+});
+
+app.get("/soferi", (req, res) => {
+
+res.send(`
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="manifest" href="/manifest.json">
+
+<meta name="theme-color" content="#111827">
+
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<title>Sofer Taxi</title>
+<link rel="stylesheet" href="/dispecerat/style.css">
+</head>
+
+<body>
+
+<div id="zona-login" style="
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+z-index:99999;
+background:#111827;
+color:white;
+padding:30px;
+border-radius:20px;
+width:320px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+">
+<h2 style="color:red;">🚖 TAXI PARADIS</h2>
+
+<input id="username" placeholder="Indicativ" style="width:100%;padding:12px;margin:5px;">
+<input id="parola" type="password" placeholder="Parola" style="width:100%;padding:12px;margin:5px;">
+
+<button onclick="loginSofer()" style="
+width:100%;
+padding:12px;
+background:#16a34a;
+color:white;
+border:0;
+border-radius:10px;
+font-size:18px;
+">
+INTRĂ
+</button>
+
+<br>
+
+<a href="/creare-cont">
+<button style="
+width:100%;
+padding:12px;
+background:#2563eb;
+color:white;
+border:0;
+border-radius:10px;
+font-size:18px;
+margin-top:10px;
+">
+📝 CREEAZĂ CONT NOU
+</button>
+</a>
+
+</div>
+
+<div id="map" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:0;
+"></div>
+
+<h2 style="
+position:fixed;
+top:15px;
+left:15px;
+margin:0;
+padding:12px 18px;
+background:rgba(20,20,20,.85);
+color:white;
+border-radius:15px;
+font-family:Arial;
+z-index:999;
+">
+🚖 TAXI PARADIS
+</h2>
+
+<button id="schimbaParola"
+style="
+position:fixed;
+top:65px;
+right:15px;
+display:inline-block;
+width:auto;
+padding:10px 18px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:12px;
+z-index:9999;
+">
+🔑 Schimbare parolă
+</button>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+
+const btn=document.getElementById("schimbaParola");
+
+if(btn){
+    btn.onclick=function(){
+        let parolaNoua=prompt("Introdu parola noua:");
+
+        if(parolaNoua){
+            alert("Parola va fi schimbata: "+parolaNoua);
+        }
+    }
+}
+
+});
+</script>
+
+<button id="online"
+style="
+position:fixed;
+top:15px;
+right:15px;
+display:inline-block;
+width:auto;
+padding:10px 18px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:12px;
+z-index:9999;
+">
+🟢 ONLINE
+</button>
+
+<div id="oferta" style="
+display:none;
+position:fixed;
+left:15px;
+right:15px;
+bottom:15px;
+padding:20px;
+border-radius:20px;
+background:rgba(20,20,20,0.85);
+color:white;
+z-index:999;
+">
+<div id="panouOferta">
+
+<div style="
+text-align:center;
+font-size:28px;
+font-weight:bold;
+margin-bottom:20px;
+">
+🚖 COMANDĂ NOUĂ
+</div>
+
+<div style="
+background:#2d3748;
+padding:15px;
+border-radius:15px;
+margin-bottom:12px;
+">
+
+<div style="font-size:13px;color:#9ca3af;">
+📍 PLECARE
+</div>
+
+<div id="plecare" style="font-size:22px;font-weight:bold;"></div>
+
+</div>
+
+<div style="
+background:#2d3748;
+padding:15px;
+border-radius:15px;
+margin-bottom:12px;
+">
+
+<div style="font-size:13px;color:#9ca3af;">
+🏁 DESTINAȚIE
+</div>
+
+<div id="destinatie" style="font-size:22px;font-weight:bold;"></div>
+
+</div>
+
+<div style="
+text-align:center;
+font-size:30px;
+font-weight:bold;
+margin:20px 0;
+">
+⏳ <span id="cronometru">10</span>s
+</div>
+
+<div style="display:flex;gap:10px;">
+<button id="accepta" style="
+width:100%;
+height:60px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:15px;
+font-size:22px;
+font-weight:bold;
+margin-top:10px;
+">
+🟢 ACCEPTĂ
+</button>
+<button id="refuza" style="
+width:100%;
+height:60px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:15px;
+font-size:22px;
+font-weight:bold;
+margin-top:10px;
+">
+🔴 REFUZĂ
+</button>
+</div>
+
+</div>
+
+<div id="panouCursa" style="display:none;">
+
+<h3 id="titluCursa">🚖 CURSĂ ACCEPTATĂ</h3>
+
+<p><b>📍 Plecare:</b> <span id="plecare2"></span></p>
+
+<p><b>🏁 Destinație:</b> <span id="destinatie2"></span></p>
+
+<div style="
+background:#166534;
+padding:15px;
+border-radius:15px;
+margin:15px 0;
+text-align:center;
+">
+<div style="font-size:13px;color:#bbf7d0;">
+📞 TELEFON CLIENT
+</div>
+
+<div id="telefonClient" style="
+font-size:26px;
+font-weight:bold;
+margin:5px 0 10px 0;
+">
+</div>
+
+<button id="sunaClient" style="
+width:100%;
+height:55px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:15px;
+font-size:21px;
+font-weight:bold;
+">
+📞 SUNĂ CLIENTUL
+</button>
+</div>
+
+
+<br>
+
+<div style="display:flex;gap:10px;">
+<button id="googleMaps" style="
+flex:1;
+height:55px;
+background:#1a73e8;
+color:white;
+border:none;
+border-radius:15px;
+font-size:20px;
+font-weight:bold;
+margin-top:10px;
+">
+🧭 NAVIGHEAZĂ CU GOOGLE MAPS
+</button>
+
+
+</div>
+
+<div style="display:flex;gap:10px;">
+<button id="laClient" style="
+flex:1;
+height:55px;
+background:#f59e0b;
+color:white;
+border:none;
+border-radius:15px;
+font-size:20px;
+font-weight:bold;
+margin-top:10px;
+">
+🚕 LA CLIENT
+</button>
+
+<button id="clientAbsent" style="
+display:none;
+flex:1;
+height:55px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:15px;
+font-size:20px;
+font-weight:bold;
+margin-top:10px;
+">
+❌ CLIENTUL NU A VENIT
+</button>
+
+<button id="renunta" style="
+flex:1;
+height:55px;
+background:#4b5563;
+color:white;
+border:none;
+border-radius:15px;
+font-size:20px;
+font-weight:bold;
+margin-top:10px;
+">
+❌ RENUNȚĂ
+</button>
+</div>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+function loginSofer(){
+
+    let indicativ=document.getElementById("username").value;
+    let parola=document.getElementById("parola").value;
+
+    if(!indicativ || !parola){
+        alert("Introdu indicativul si parola");
+        return;
+    }
+
+    socket.emit("identificare", {
+        indicativ: indicativ,
+        parola: parola
+    });
+}
+
+socket.on("login_ok",(sofer)=>{
+
+    indicativ = sofer.indicativ;
+
+    localStorage.setItem("indicativ", indicativ);
+
+    document.getElementById("zona-login").style.display = "none";
+
+    trimiteLocatia();
+    setInterval(trimiteLocatia, 10000);
+
+});
+
+socket.on("login_eroare",(mesaj)=>{
+
+    alert(mesaj);
+
+});
+
+
+const map = L.map('map', {
+    zoomControl: false,
+    attributionControl: false
+}).setView([44.435, 24.371], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
+let markerSofer = L.marker([44.435, 24.371]).addTo(map);
+
+
+let comandaCurenta = null;
+let timer = null;
+let stareCursa = "ACCEPTATA";
+
+
+
+const alarma = new Audio("/Alerta/freesound_community-beep-beep-beep-beep-80262.mp3");
+
+alarma.loop = false;
+
+let indicativ = null;
+
+// Memoreaza daca am pus deja intrebarea de seara
+let intrebareSearaAfisata = false;
+
+// PROGRAMUL STATIILOR - DISPONIBIL SI IN BROWSER
+const PROGRAM_STATII_BROWSER = {
+    intrebareSeara: "21:50",
+    avertizareInchidere: "21:55",
+    inchidere: "22:00",
+    deschidere: "05:00"
+};
+
+function oraInMinuteBrowser(ora){
+    const parti = ora.split(":").map(Number);
+    return parti[0] * 60 + parti[1];
+}
+
+function esteInPerioadaIntrebareSearaBrowser(){
+    const acum = new Date();
+    const minute = acum.getHours() * 60 + acum.getMinutes();
+
+    return minute === oraInMinuteBrowser(
+        PROGRAM_STATII_BROWSER.intrebareSeara
+    );
+}
+
+function esteInPerioadaAvertizareInchidereBrowser(){
+    const acum = new Date();
+    const minute = acum.getHours() * 60 + acum.getMinutes();
+
+    return minute === oraInMinuteBrowser(
+        PROGRAM_STATII_BROWSER.avertizareInchidere
+    );
+}
+
+let ultimaAvertizareAfisata = false;
+let statieInchisaAnuntataBrowser = {};
+let redeschidereAfisataBrowser = false;
+
+function trimiteLocatia(){
+
+    navigator.geolocation.getCurrentPosition((pozitie)=>{
+
+markerSofer.setLatLng([
+            pozitie.coords.latitude,
+            pozitie.coords.longitude
+        ]);
+
+        map.setView([
+            pozitie.coords.latitude,
+            pozitie.coords.longitude
+        ],16);
+
+        fetch("/locatie-sofer",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                indicativ:indicativ,
+                lat:pozitie.coords.latitude,
+                lng:pozitie.coords.longitude
+            })
+
+        })
+
+        .then(r=>r.json())
+
+        .then(r=>{
+
+        // ==========================================
+        // REDESCHIDERE STAȚII - ORA 05:00
+        // MESAJ + SONOR O SINGURĂ DATĂ
+        // ==========================================
+
+        if(
+            !redeschidereAfisataBrowser &&
+            new Date().getHours() === 5 &&
+            new Date().getMinutes() === 0 &&
+            r.statie
+        ){
+
+            redeschidereAfisataBrowser = true;
+
+            alarma.currentTime = 0;
+            alarma.loop = false;
+            alarma.play().catch(()=>{});
+
+            const redeschidere = document.createElement("div");
+
+            redeschidere.id = "statie-redeschisa-browser";
+
+            redeschidere.style.cssText =
+                "position:fixed;" +
+                "top:50%;" +
+                "left:50%;" +
+                "transform:translate(-50%,-50%);" +
+                "width:min(90%,500px);" +
+                "background:#111827;" +
+                "color:white;" +
+                "z-index:999999;" +
+                "padding:30px;" +
+                "border-radius:25px;" +
+                "text-align:center;" +
+                "box-shadow:0 0 40px rgba(0,0,0,.8);" +
+                "border:5px solid #16a34a;" +
+                "font-family:Arial,sans-serif;";
+
+            redeschidere.innerHTML =
+                '<div style="font-size:34px;font-weight:900;color:#22c55e;margin-bottom:20px;">' +
+                '🟢 STAȚIA S-A REDESCHIS' +
+                '</div>' +
+
+                '<div style="font-size:26px;font-weight:900;line-height:1.5;margin-bottom:25px;">' +
+                'Stațiile sunt din nou deschise.' +
+                '<br><br>' +
+                '🚕 Puteți intra din nou la rând.' +
+                '</div>' +
+
+                '<button style="width:100%;min-height:70px;background:#16a34a;color:white;border:0;border-radius:18px;font-size:24px;font-weight:900;cursor:pointer;">' +
+                'AM ÎNȚELES' +
+                '</button>';
+
+            document.body.appendChild(redeschidere);
+
+            redeschidere.querySelector("button").onclick = () => {
+                alarma.pause();
+                alarma.currentTime = 0;
+                redeschidere.remove();
+            };
+        }
+
+
+            // ==========================================
+            // ULTIMA AVERTIZARE - 19:10
+            // SONOR + FARA INTREBARE
+            // ==========================================
+
+            if(
+                r.statie &&
+                !["gara", "hcc", "statia2"].includes(
+                    String(r.statie).toLowerCase()
+                ) &&
+                !ultimaAvertizareAfisata &&
+                esteInPerioadaAvertizareInchidereBrowser()
+            ){
+
+                ultimaAvertizareAfisata = true;
+
+                alarma.currentTime = 0;
+                alarma.loop = false;
+                alarma.play().catch(()=>{});
+
+                const avertizare = document.createElement("div");
+
+                avertizare.id = "ultima-avertizare-inchidere";
+
+                avertizare.style.cssText =
+                    "position:fixed;" +
+                    "top:50%;" +
+                    "left:50%;" +
+                    "transform:translate(-50%,-50%);" +
+                    "width:min(90%,500px);" +
+                    "background:#111827;" +
+                    "color:white;" +
+                    "z-index:999999;" +
+                    "padding:30px;" +
+                    "border-radius:25px;" +
+                    "text-align:center;" +
+                    "box-shadow:0 0 40px rgba(0,0,0,.8);" +
+                    "border:5px solid #ef4444;" +
+                    "font-family:Arial,sans-serif;";
+
+                avertizare.innerHTML =
+                    '<div style="font-size:34px;font-weight:900;color:#ef4444;margin-bottom:20px;">' +
+                    '🚨 ULTIMA AVERTIZARE!' +
+                    '</div>' +
+
+                    '<div style="font-size:28px;font-weight:900;line-height:1.3;margin-bottom:15px;">' +
+                    'STAȚIA ' + r.statie.toUpperCase() +
+                    '</div>' +
+
+                    '<div style="font-size:24px;font-weight:900;line-height:1.4;">' +
+                    'Stația se închide la ora ' +
+                    '<span style="color:#facc15;">' +
+                    PROGRAM_STATII_BROWSER.inchidere +
+                    '</span>' +
+                    '<br><br>' +
+                    'ACEASTA ESTE ULTIMA AVERTIZARE.' +
+                    '</div>' +
+
+                    '<button style="margin-top:25px;width:100%;min-height:70px;background:#dc2626;color:white;border:0;border-radius:18px;font-size:24px;font-weight:900;cursor:pointer;">' +
+                    'AM ÎNȚELES' +
+                    '</button>';
+
+                document.body.appendChild(avertizare);
+
+                avertizare.querySelector("button").onclick = () => {
+                    alarma.pause();
+                    alarma.currentTime = 0;
+                    avertizare.remove();
+                };
+            }
+
+            // ==========================================
+            // INTREBARE INAINTE DE INCHIDERE
+            // ==========================================
+
+            if(
+                r.statie &&
+                !["gara", "hcc", "statia2"].includes(
+                    String(r.statie).toLowerCase()
+                ) &&
+                !intrebareSearaAfisata &&
+                esteInPerioadaIntrebareSearaBrowser()
+            ){
+
+                intrebareSearaAfisata = true;
+
+                // SONOR LA 19:00
+                alarma.currentTime = 0;
+                alarma.loop = false;
+                alarma.play().catch(()=>{});
+
+                const intrebare = document.createElement("div");
+
+                intrebare.id = "intrebare-inchidere";
+
+                intrebare.style.cssText =
+                    "position:fixed;" +
+                    "top:50%;" +
+                    "left:50%;" +
+                    "transform:translate(-50%,-50%);" +
+                    "width:min(90%,500px);" +
+                    "background:#111827;" +
+                    "color:white;" +
+                    "z-index:999999;" +
+                    "padding:30px;" +
+                    "border-radius:25px;" +
+                    "text-align:center;" +
+                    "box-shadow:0 0 40px rgba(0,0,0,.8);" +
+                    "border:5px solid #facc15;" +
+                    "font-family:Arial,sans-serif;";
+
+                intrebare.innerHTML =
+                    '<div style="font-size:34px;font-weight:900;color:#facc15;margin-bottom:20px;">' +
+                    '⚠️ ATENȚIE!' +
+                    '</div>' +
+
+                    '<div style="font-size:28px;font-weight:900;line-height:1.3;margin-bottom:15px;">' +
+                    'STAȚIA ' + r.statie.toUpperCase() +
+                    '</div>' +
+
+                    '<div style="font-size:24px;font-weight:900;line-height:1.4;margin-bottom:25px;">' +
+                    'Se închide la ora ' +
+                    '<span style="color:#ef4444;">' +
+                    PROGRAM_STATII_BROWSER.inchidere +
+                    '</span>' +
+                    '<br><br>' +
+                    'RĂMÂNEȚI PENTRU ULTIMA COMANDĂ?' +
+                    '</div>' +
+
+                    '<div style="display:flex;gap:15px;">' +
+
+                    '<button id="btn-raman" style="flex:1;min-height:90px;background:#16a34a;color:white;border:0;border-radius:18px;font-size:25px;font-weight:900;cursor:pointer;">' +
+                    '✅ DA<br>RĂMÂN' +
+                    '</button>' +
+
+                    '<button id="btn-plec" style="flex:1;min-height:90px;background:#dc2626;color:white;border:0;border-radius:18px;font-size:25px;font-weight:900;cursor:pointer;">' +
+                    '❌ NU<br>PLEC' +
+                    '</button>' +
+
+                    '</div>';
+
+                document.body.appendChild(intrebare);
+
+                function raspundeInchidere(raspuns){
+
+                    fetch("/raspuns-inchidere-statie",{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            indicativ:indicativ,
+                            statie:r.statie,
+                            raspuns:raspuns
+                        })
+                    })
+                    .then(x=>x.json())
+                    .then(rezultat=>{
+
+                        if(!rezultat.ok){
+                            alert("Eroare la transmiterea răspunsului.");
+                            return;
+                        }
+
+                        intrebare.remove();
+
+                        if(raspuns === "DA"){
+                            alert(
+                                "✅ AI ALES SĂ RĂMÂI.\\n\\n" +
+                                "Rămâi în stație pentru ultima comandă."
+                            );
+                        }else{
+                            alert(
+                                "❌ AI ALES SĂ PLECI.\\n\\n" +
+                                "Ai fost scos din rândul stației."
+                            );
+                        }
+
+                    })
+                    .catch(err=>{
+                        console.error("EROARE RASPUNS INCHIDERE:",err);
+                        alert("Nu s-a putut transmite răspunsul.");
+                    });
+                }
+
+                document.getElementById("btn-raman")
+                    .onclick = () => raspundeInchidere("DA");
+
+                document.getElementById("btn-plec")
+                    .onclick = () => raspundeInchidere("NU");
+
+                return;
+            }
+            // ==========================================
+            // ==========================================
+            // STATIE INCHISA - MESAJ PENTRU SOFER
+            // AFISAT O SINGURA DATA PENTRU FIECARE STATIE
+            // ==========================================
+
+            if(
+                r.actiune==="STATIE_INCHISA" &&
+                !["gara", "hcc", "statia2"].includes(
+                    String(r.statie || "").toLowerCase()
+                )
+            ){
+
+                const cheiaStatie = String(r.statie || "").toLowerCase();
+
+                if(!statieInchisaAnuntataBrowser[cheiaStatie]){
+
+                    statieInchisaAnuntataBrowser[cheiaStatie] = true;
+
+                    alarma.currentTime = 0;
+                    alarma.loop = false;
+                    alarma.play().catch(()=>{});
+
+                    const inchisa = document.createElement("div");
+
+                    inchisa.id = "statie-inchisa-browser";
+
+                    inchisa.style.cssText =
+                        "position:fixed;" +
+                        "top:50%;" +
+                        "left:50%;" +
+                        "transform:translate(-50%,-50%);" +
+                        "width:min(90%,500px);" +
+                        "background:#111827;" +
+                        "color:white;" +
+                        "z-index:999999;" +
+                        "padding:30px;" +
+                        "border-radius:25px;" +
+                        "text-align:center;" +
+                        "box-shadow:0 0 40px rgba(0,0,0,.8);" +
+                        "border:5px solid #ef4444;" +
+                        "font-family:Arial,sans-serif;";
+
+                    inchisa.innerHTML =
+                        '<div style="font-size:34px;font-weight:900;color:#ef4444;margin-bottom:20px;">' +
+                        '🔴 STAȚIA ' +
+                        String(r.statie || "").toUpperCase() +
+                        ' ESTE ÎNCHISĂ' +
+                        '</div>' +
+
+                        '<div style="font-size:24px;font-weight:900;line-height:1.5;margin-bottom:20px;">' +
+                    'Programul stației este ' +
+                    PROGRAM_STATII_BROWSER.deschidere + ' - ' +
+                    PROGRAM_STATII_BROWSER.inchidere +
+                    '<br><br>' +
+                    '🚕 Vă rugăm să mergeți către una dintre stațiile deschise:' +
+                    '</div>' +
+                        '<div style="font-size:24px;font-weight:900;line-height:1.7;margin-bottom:20px;">' +
+                        '🚉 GARA<br>' +
+                        '🏥 HCC<br>' +
+                        '🚕 STAȚIA 2' +
+                        '</div>' +
+
+                        '<div style="font-size:20px;font-weight:700;margin-bottom:20px;">' +
+                        'Stația este închisă momentan și nu poți intra la rând.' +
+                        '</div>' +
+
+                        '<button style="width:100%;min-height:70px;background:#dc2626;color:white;border:0;border-radius:18px;font-size:24px;font-weight:900;cursor:pointer;">' +
+                        'AM ÎNȚELES' +
+                        '</button>';
+
+                    document.body.appendChild(inchisa);
+
+                    inchisa.querySelector("button").onclick = () => {
+                        alarma.pause();
+                        alarma.currentTime = 0;
+                        inchisa.remove();
+                    };
+                }
+
+                return;
+            }
+
+            if(r.actiune==="INTRARE_STATIE"){
+
+                if(confirm("Ati ajuns in statia "+r.statie+". Intrati la rand?")){
+
+                    fetch("/intra-in-statie",{
+
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+
+                        body:JSON.stringify({
+                            indicativ:indicativ,
+                            statie:r.statie
+                        })
+
+                    });
+
+                }
+
+            }
+
+            if(r.actiune==="IESIRE_STATIE"){
+
+                alert("Ati iesit din statia "+r.statie);
+
+            }
+
+        });
+
+    });
+
+}
+
+
+socket.on("comanda_noua",(comanda)=>{
+
+    alarma.currentTime = 0;
+alarma.play()
+.then(() => {
+    console.log("SUNET PORNIT");
+})
+.catch((err) => {
+    console.log("EROARE SUNET:", err);
+});
+    comandaCurenta = comanda;
+
+    if (comanda.avertizareRefuzuri) {
+
+        const avertizareRefuzuri = document.createElement("div");
+
+        avertizareRefuzuri.id = "avertizare-refuzuri";
+
+        avertizareRefuzuri.style.cssText =
+            "position:fixed;" +
+            "top:50%;" +
+            "left:50%;" +
+            "transform:translate(-50%,-50%);" +
+            "width:min(90%,700px);" +
+            "background:#111827;" +
+            "color:white;" +
+            "z-index:999999;" +
+            "padding:35px;" +
+            "border-radius:25px;" +
+            "text-align:center;" +
+            "box-shadow:0 0 40px rgba(0,0,0,.8);" +
+            "border:5px solid #f59e0b;" +
+            "font-family:Arial,sans-serif;";
+
+        avertizareRefuzuri.innerHTML =
+            '<div style="font-size:40px;font-weight:900;color:#f59e0b;margin-bottom:25px;">' +
+            '⚠️ ATENȚIE' +
+            '</div>' +
+
+            '<div style="font-size:30px;font-weight:900;line-height:1.5;margin-bottom:25px;">' +
+            'Aveți ' + (parseInt((comanda.avertizareRefuzuri || '').match(/\\d+/)?.[0] || '0')) + ' refuzuri consecutive.' +
+            '<br><br>' +
+            '<span style="font-size:25px;">Vă rugăm să respectați regulamentul și să răspundeți comenzilor.</span>' +
+            '</div>' +
+
+            '<button style="width:100%;min-height:75px;background:#f59e0b;color:#111827;border:0;border-radius:18px;font-size:26px;font-weight:900;cursor:pointer;">' +
+            'AM ÎNȚELES' +
+            '</button>';
+
+        document.body.appendChild(avertizareRefuzuri);
+
+        avertizareRefuzuri.querySelector("button").onclick = () => {
+            alarma.pause();
+            alarma.currentTime = 0;
+            avertizareRefuzuri.remove();
+        };
+    }
+
+    document.getElementById("plecare").innerText = comanda.plecare;
+    document.getElementById("destinatie").innerText = comanda.destinatie;
+    document.getElementById("oferta").style.display = "block";
+
+document.getElementById("panouOferta").style.display = "block";
+document.getElementById("panouCursa").style.display = "none";
+
+    let secunde = 10;
+    document.getElementById("cronometru").innerText = secunde;
+
+    if(timer){
+        clearInterval(timer);
+    }
+
+    timer = setInterval(()=>{
+
+        secunde--;
+
+        document.getElementById("cronometru").innerText = secunde;
+
+        if(secunde<=0){
+
+            clearInterval(timer);
+
+alarma.pause();
+alarma.currentTime = 0;
+
+            document.getElementById("oferta").style.display="none";
+
+        }
+
+    },1000);
+
+});
+
+document.getElementById("accepta").onclick = function () {
+
+    clearInterval(timer);
+
+    alarma.pause();
+    alarma.currentTime = 0;
+
+    fetch("/accepta-automat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            indicativ: indicativ,
+            id: comandaCurenta.id
+        })
+    })
+    .then(r => r.json())
+.then(() => {
+
+    document.getElementById("panouOferta").style.display = "none";
+    document.getElementById("panouCursa").style.display = "block";
+
+    document.getElementById("plecare2").innerText = comandaCurenta.plecare;
+    document.getElementById("destinatie2").innerText = comandaCurenta.destinatie;
+
+
+document.getElementById("telefonClient").innerText =
+    comandaCurenta.telefon || "Număr indisponibil";
+
+document.getElementById("sunaClient").onclick = function () {
+    if (comandaCurenta.telefon) {
+        window.location.href = "tel:" + comandaCurenta.telefon;
+    }
+};
+
+stareCursa = "ACCEPTATA";
+});
+
+};
+
+document.getElementById("refuza").onclick=function(){
+
+    clearInterval(timer);
+
+alarma.pause();
+alarma.currentTime = 0;
+
+    document.getElementById("oferta").style.display="none";
+
+    fetch("/refuza-automat",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            indicativ:indicativ,
+            id:comandaCurenta.id
+        })
+    });
+
+};
+
+document.getElementById("googleMaps").onclick = function () {
+
+    window.open(
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(comandaCurenta.plecare),
+        "_blank"
+    );
+
+};
+
+
+
+
+
+document.getElementById("renunta").onclick = function () {
+
+    if (!comandaCurenta) {
+        return;
+    }
+
+    const motiv = prompt("Scrie motivul pentru care renunți la client:");
+
+    if (motiv === null) {
+        return;
+    }
+
+    if (!motiv.trim()) {
+        alert("Trebuie să scrii motivul renunțării.");
+        return;
+    }
+
+    fetch("/client-absent", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            indicativ: indicativ,
+            id: comandaCurenta.id,
+            motiv: motiv.trim()
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+
+        console.log("RENUNTARE CLIENT:", data);
+
+        document.getElementById("panouCursa").style.display = "none";
+        document.getElementById("oferta").style.display = "none";
+
+        comandaCurenta = null;
+        stareCursa = "LIBER";
+
+    })
+    .catch(err => {
+
+        console.error("EROARE RENUNTARE:", err);
+        alert("Eroare la renunțarea la client.");
+
+    });
+};
+
+document.getElementById("clientAbsent").onclick = function () {
+
+    if (!comandaCurenta) return;
+
+    let motiv = prompt(
+        "De ce renunți la client?\\n\\n" +
+        "1 - Clientul nu răspunde\\n" +
+        "2 - Clientul a anulat\\n" +
+        "3 - Nu pot ajunge la client\\n" +
+        "4 - Alt motiv\\n\\n" +
+        "Scrie 1, 2, 3 sau 4:"
+    );
+
+    if (motiv === null) return;
+
+    const motive = {
+        "1": "Clientul nu răspunde",
+        "2": "Clientul a anulat",
+        "3": "Nu pot ajunge la client"
+    };
+
+    if (motiv === "4") {
+        motiv = prompt("Scrie motivul renunțării:");
+        if (motiv === null || !motiv.trim()) return;
+    } else if (!motive[motiv]) {
+        alert("Alege 1, 2, 3 sau 4.");
+        return;
+    } else {
+        motiv = motive[motiv];
+    }
+
+    fetch("/client-absent", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            indicativ: indicativ,
+            id: comandaCurenta.id,
+            motiv: motiv
+        })
+    })
+    .then(r => r.json())
+    .then(() => {
+
+        document.getElementById("panouCursa").style.display = "none";
+        document.getElementById("oferta").style.display = "none";
+
+        comandaCurenta = null;
+        stareCursa = "LIBER";
+
+    })
+    .catch(err => {
+        console.error("EROARE RENUNTARE CLIENT:", err);
+        alert("Nu s-a putut înregistra renunțarea.");
+    });
+
+};
+document.getElementById("laClient").onclick = function () {
+
+    if (stareCursa === "ACCEPTATA") {
+
+        fetch("/la-client", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                indicativ: indicativ,
+                id: comandaCurenta.id
+            })
+        })
+        .then(r => r.json())
+        .then(() => {
+
+            stareCursa = "LA_CLIENT";
+
+            document.getElementById("titluCursa").innerText = "🚖 LA CLIENT";
+            document.getElementById("laClient").innerText = "▶ În cursă";
+
+            document.getElementById("clientAbsent").style.display = "block";
+
+        });
+
+        return;
+    }
+
+    if (stareCursa === "LA_CLIENT") {
+
+        fetch("/in-cursa", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                indicativ: indicativ,
+                id: comandaCurenta.id
+            })
+        })
+        .then(r => r.json())
+        .then(() => {
+
+            stareCursa = "IN_CURSA";
+
+            document.getElementById("titluCursa").innerText = "🚖 ÎN CURSĂ";
+            document.getElementById("laClient").innerText = "🏁 Finalizată";
+
+        });
+
+        return;
+    }
+
+    if (stareCursa === "IN_CURSA") {
+
+        fetch("/finalizata", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                indicativ: indicativ,
+                id: comandaCurenta.id
+            })
+        })
+        .then(r => r.json())
+        .then(() => {
+
+            stareCursa = null;
+            comandaCurenta = null;
+
+            document.getElementById("panouCursa").style.display = "none";
+            document.getElementById("oferta").style.display = "none";
+
+            document.getElementById("titluCursa").innerText = "🚖 CURSĂ ACCEPTATĂ";
+            document.getElementById("laClient").innerText = "✅ La client";
+
+            alert("Cursa a fost finalizată.");
+
+        });
+
+        return;
+    }
+
+};
+
+
+socket.on("anuleaza_comanda",()=>{
+
+    clearInterval(timer);
+
+alarma.pause();
+alarma.currentTime = 0;
+
+document.getElementById("oferta").style.display="none";
+
+});
+
+</script>
+
+</body>
+</html>
+
+`);
+
+});
+app.post("/accepta-sofer/:id", (req, res) => {
+
+const id = parseInt(req.params.id);
+
+if (comenzi[id]) {
+
+  comenzi[id].status = "ACCEPTATA";
+  comenzi[id].sofer = req.body.sofer;
+  comenzi[id].indicativ = req.body.indicativ;
+  comenzi[id].timp = req.body.timp;
+
+  salveazaComenzi();
+  io.emit("actualizare");
+io.emit("lista_comenzi", comenzi);
+
+}
+
+res.redirect("/soferi");
+});
+
+app.post("/locatie-sofer", (req, res) => {
+
+  const indicativ = String(req.body.indicativ || "");
+
+  const lat = Number(req.body.lat);
+  const lng = Number(req.body.lng);
+
+  ultimaActivitate[indicativ] = Date.now();
+
+  const statie = gasesteStatia(lat, lng);
+
+  if (!stareSoferi[indicativ]) {
+    stareSoferi[indicativ] = {
+      statie: null,
+      lat: null,
+      lng: null
+    };
+  }
+
+  // Memoram pozitia GPS
+  stareSoferi[indicativ].lat = lat;
+  stareSoferi[indicativ].lng = lng;
+
+  let raspuns = {
+    actiune: null,
+    statie: statie
+  };
+
+
+  // ============================================================
+  // SOFERUL ESTE INTR-O STATIE
+  // ============================================================
+
+  if (statie) {
+
+    // ----------------------------------------------------------
+    // STATIA ESTE INCHISA
+    // ----------------------------------------------------------
+
+    if (!programStatii.esteDeschisa(statie)) {
+
+      const raspunsSofer =
+        raspunsuriInchidereStatii[indicativ] &&
+        raspunsuriInchidereStatii[indicativ][statie];
+
+      // Soferul a ales sa ramana pentru ultima comanda
+      if (raspunsSofer === "RAMANE") {
+
+        raspuns.actiune = "ULTIMA_COMANDA";
+        raspuns.statie = statie;
+
+        console.log(
+          "ULTIMA COMANDA - SOFER RAMANE:",
+          indicativ,
+          "STATIA:",
+          statie.toUpperCase()
+        );
+
+        return res.json(raspuns);
+      }
+
+      // Mesajul de statie inchisa se trimite o singura data
+      if (!statiiInchiseAnuntate[indicativ]) {
+        statiiInchiseAnuntate[indicativ] = {};
+      }
+
+      if (statiiInchiseAnuntate[indicativ][statie]) {
+
+        raspuns.actiune = null;
+        raspuns.statie = statie;
+
+        return res.json(raspuns);
+      }
+
+      statiiInchiseAnuntate[indicativ][statie] = true;
+
+      raspuns.actiune = "STATIE_INCHISA";
+      raspuns.statie = statie;
+
+      raspuns.mesaj =
+        "🔴 STAȚIA " +
+        statie.toUpperCase() +
+        " ESTE ÎNCHISĂ.\n\n" +
+        "Programul stației este " +
+        programStatii.PROGRAM.deschidere +
+        " - " +
+        programStatii.PROGRAM.inchidere +
+        ".\n\n" +
+        "🚕 Vă rugăm să mergeți către una dintre stațiile deschise:\n" +
+        "🚉 GARA\n" +
+        "🏥 HCC\n" +
+        "🚕 STAȚIA 2";
+
+      console.log(
+        "STATIE INCHISA:",
+        statie,
+        "SOFER:",
+        indicativ
+      );
+
+      return res.json(raspuns);
+    }
+
+
+    // ----------------------------------------------------------
+    // STATIA ESTE DESCHISA
+    // ----------------------------------------------------------
+
+    // Daca statia s-a redeschis, stergem raspunsul vechi PLEACA.
+    if (
+      raspunsuriInchidereStatii[indicativ] &&
+      raspunsuriInchidereStatii[indicativ][statie] === "PLEACA"
+    ) {
+
+      delete raspunsuriInchidereStatii[indicativ][statie];
+
+      console.log(
+        "STATIE REDESCHISA - STERG PLEACA:",
+        indicativ,
+        statie
+      );
+    }
+
+
+    // ==========================================================
+    // UN SOFER POATE FI INTR-O SINGURA STATIE
+    // ==========================================================
+
+    // Scoatem soferul din toate celelalte statii.
+    for (const numeStatie in randStatii) {
+
+      if (!Array.isArray(randStatii[numeStatie])) {
+        continue;
+      }
+
+      if (numeStatie === statie) {
+        continue;
+      }
+
+      const exista =
+        randStatii[numeStatie].some(
+          s => String(s) === String(indicativ)
+        );
+
+      if (exista) {
+
+        randStatii[numeStatie] =
+          randStatii[numeStatie].filter(
+            s => String(s) !== String(indicativ)
+          );
+
+        delete timpStatii[
+          numeStatie + "_" + indicativ
+        ];
+
+        console.log(
+          "SOFER SCOS DIN STATIA VECHE:",
+          indicativ,
+          numeStatie
+        );
+      }
+    }
+
+
+    // ==========================================================
+    // ADAUGAM SOFERUL IN STATIA CURENTA
+    // ==========================================================
+
+    if (!randStatii[statie]) {
+      randStatii[statie] = [];
+    }
+
+    if (!randStatii[statie].includes(indicativ)) {
+
+      randStatii[statie].push(indicativ);
+
+      timpStatii[
+        statie + "_" + indicativ
+      ] = Date.now();
+
+      raspuns.actiune = "INTRARE_STATIE";
+
+      console.log(
+        "SOFER INTRODUS IN STATIE:",
+        indicativ,
+        statie
+      );
+    }
+
+  } else {
+
+    // ==========================================================
+    // SOFERUL NU MAI ESTE IN NICIO STATIE
+    // ==========================================================
+
+    if (stareSoferi[indicativ].statie) {
+
+      raspuns.actiune = "IESIRE_STATIE";
+
+      raspuns.statie =
+        stareSoferi[indicativ].statie;
+
+      console.log(
+        "SOFER A IESIT DIN STATIE:",
+        indicativ,
+        stareSoferi[indicativ].statie
+      );
+    }
+
+
+    // Eliminam soferul din TOATE cozile.
+    for (const numeStatie in randStatii) {
+
+      if (!Array.isArray(randStatii[numeStatie])) {
+        continue;
+      }
+
+      const exista =
+        randStatii[numeStatie].some(
+          s => String(s) === String(indicativ)
+        );
+
+      if (exista) {
+
+        randStatii[numeStatie] =
+          randStatii[numeStatie].filter(
+            s => String(s) !== String(indicativ)
+          );
+
+        delete timpStatii[
+          numeStatie + "_" + indicativ
+        ];
+
+        console.log(
+          "SOFER SCOS DIN STATIE:",
+          indicativ,
+          numeStatie
+        );
+      }
+    }
+  }
+
+
+  // ============================================================
+  // MEMORAM STATIA CURENTA DUPA CE AM STABILIT ACTIUNEA
+  // ============================================================
+
+  stareSoferi[indicativ].statie = statie;
+
+  stareSoferi[indicativ].ultimaActiune =
+    raspuns.actiune;
+
+
+  // ============================================================
+  // ACTUALIZAM DISPECERATUL
+  // ============================================================
+
+  io.emit(
+    "actualizare_statii",
+    {
+      statii: randStatii,
+      timpuri: timpStatii,
+      soferiGPS: stareSoferi
+    }
+  );
+
+
+  console.log(
+    "SOFER:",
+    indicativ,
+    "LAT:",
+    lat,
+    "LNG:",
+    lng,
+    "STATIE:",
+    statie || "IN.AFARA.STATIEI",
+    "ACTIUNE:",
+    raspuns.actiune
+  );
+
+
+  res.json(raspuns);
+
+});
+
+
+app.post("/accepta-automat", (req, res) => {
+    console.log("ACCEPTARE PRIMITA:", req.body);
+
+    const id = req.body.id;
+
+    if (!comenzi[id]) {
+        return res.json({ ok: false });
+    }
+
+    comenzi[id].status = "ACCEPTATA";
+    comenzi[id].indicativ = req.body.indicativ;
+
+    trimiteActivitate(
+        "✅ CURSĂ ACCEPTATĂ",
+        comenzi[id].plecare,
+        "Taxi " + req.body.indicativ + " a preluat comanda #" + id
+    );
+
+    // SCOATERE AUTOMATA DIN RANDUL STATIEI
+    const indicativAcceptat = req.body.indicativ;
+
+    for (const statie in randStatii) {
+
+        if (randStatii[statie].includes(indicativAcceptat)) {
+
+            const pozitie =
+                randStatii[statie].indexOf(indicativAcceptat) + 1;
+
+            console.log("================================");
+            console.log("PLECARE DIN STATIE");
+            console.log("STATIE:", statie);
+            console.log("POZITIE RAND:", pozitie);
+            console.log("INDICATIV:", indicativAcceptat);
+
+            statiePlecareSofer[indicativAcceptat] = statie;
+
+            console.log(
+                "MEMOREZ STATIE PLECARE:",
+                indicativAcceptat,
+                statie
+            );
+
+            randStatii[statie] =
+                randStatii[statie].filter(
+                    x => x !== indicativAcceptat
+                );
+
+            console.log("RAND NOU:", randStatii[statie]);
+            console.log("================================");
+        }
+    }
+
+    // Scrie pe disc în timp real ca să vadă Linux-ul prin rețea
+    fs.writeFileSync("comenzi.json", JSON.stringify(comenzi, null, 2));
+
+    console.log(
+        "CURSA ACCEPTATA:",
+        id,
+        "SOFER:",
+        req.body.indicativ
+    );
+
+    comenzi[id].oraAcceptare = new Date().toLocaleTimeString("ro-RO");
+
+    if (typeof salveazaComenzi === "function") {
+        salveazaComenzi();
+    }
+
+    if (typeof listaOferte !== "undefined" && listaOferte[id]) {
+        delete listaOferte[id];
+    }
+
+    if (typeof io !== "undefined") {
+        io.emit("actualizare");
+        io.emit("lista_comenzi", comenzi);
+    }
+
+    return res.json({ ok: true, indicativ: req.body.indicativ });
+});
+
+app.post("/la-client", (req, res) => {
+
+    const id = req.body.id;
+
+    if (!comenzi[id]) {
+        return res.json({ ok: false });
+    }
+
+    comenzi[id].status = "LA_CLIENT";
+
+    // SOFERUL A PLECAT LA CLIENT -> RESETAM REFUZURILE
+    const indicativLaClient = comenzi[id].indicativ;
+
+    if (indicativLaClient && refuzuriConsecutive[indicativLaClient]) {
+
+        console.log(
+            "RESET REFUZURI - LA CLIENT:",
+            indicativLaClient,
+            "AVEA:",
+            refuzuriConsecutive[indicativLaClient]
+        );
+
+        delete refuzuriConsecutive[indicativLaClient];
+    }
+
+    salveazaComenzi();
+
+    io.emit("actualizare");
+io.emit("lista_comenzi", comenzi);
+
+    res.json({ ok: true });
+
+});
+app.post("/in-cursa", (req, res) => {
+
+    const id = req.body.id;
+
+    if (!comenzi[id]) {
+        return res.json({ ok: false });
+    }
+
+    comenzi[id].status = "IN_CURSA";
+
+    salveazaComenzi();
+
+    io.emit("actualizare");
+io.emit("lista_comenzi", comenzi);
+
+    res.json({ ok: true });
+
+});
+app.post("/client-absent",(req,res)=>{
+
+    const indicativ = String(req.body.indicativ || "");
+    const id = req.body.id;
+
+    console.log(
+        "CLIENT ABSENT",
+        indicativ,
+        id
+    );
+
+    const statie =
+        statiePlecareSofer[indicativ];
+
+    console.log(
+        "REVINE IN STATIA:",
+        indicativ,
+        statie
+    );
+
+    if(statie){
+
+        if(!randStatii[statie]){
+            randStatii[statie] = [];
+        }
+
+        // Scoatem taxiul daca exista deja in coada
+        randStatii[statie] =
+            randStatii[statie].filter(
+                x => String(x) !== indicativ
+            );
+
+        // Il punem primul = PRIORITATE
+        randStatii[statie].unshift(indicativ);
+
+        console.log(
+            "PRIORITATE DUPA CLIENT ABSENT:",
+            statie,
+            randStatii[statie]
+        );
+
+        io.emit(
+            "actualizare_statii",
+            {
+                statii: randStatii,
+                timpuri: timpStatii,
+                soferiGPS: stareSoferi
+            }
+        );
+
+        trimiteActivitate(
+            "⚠️ CLIENT ABSENT",
+            "Comanda #" + id,
+            "Taxi " + indicativ +
+            " revine în " + statie +
+            " cu prioritate"
+        );
+
+    } else {
+
+        console.log(
+            "ATENTIE: NU STIU STATIA DE PLECARE PENTRU:",
+            indicativ
+        );
+
+        trimiteActivitate(
+            "⚠️ CLIENT ABSENT",
+            "Comanda #" + id,
+            "Taxi " + indicativ +
+            " - stația de plecare nu a fost găsită"
+        );
+
+    }
+
+    res.json({
+        ok:true
+    });
+
+});
+app.post("/finalizata", (req, res) => {
+
+    const id = req.body.id;
+
+    if (!comenzi[id]) {
+        return res.json({ ok: false });
+    }
+
+    const indicativFinalizare =
+        String(comenzi[id].indicativ || "");
+
+    const statieFinalizare =
+        statiePlecareSofer[indicativFinalizare];
+
+    // FINALIZARE NORMALA:
+    // "RAMANE" nu mai este valabil.
+    // Doar CLIENT ABSENT poate readuce soferul
+    // in statie cu prioritate.
+    if (
+        indicativFinalizare &&
+        raspunsuriInchidereStatii[indicativFinalizare]
+    ) {
+
+        if (statieFinalizare) {
+            delete raspunsuriInchidereStatii[
+                indicativFinalizare
+            ][statieFinalizare];
+        }
+
+        console.log(
+            "FINALIZARE NORMALA - STERG RAMANE:",
+            indicativFinalizare,
+            statieFinalizare
+        );
+    }
+
+    comenzi[id].status = "FINALIZATA";
+
+    salveazaComenzi();
+
+    io.emit("actualizare");
+io.emit("lista_comenzi", comenzi);
+
+    res.json({ ok: true });
+
+});
+app.post("/refuza-automat", (req, res) => {
+
+    const id = req.body.id;
+    const indicativRefuz = req.body.indicativ;
+
+    if (indicativRefuz) {
+        refuzuriConsecutive[indicativRefuz] =
+            (refuzuriConsecutive[indicativRefuz] || 0) + 1;
+
+        console.log(
+            "REFUZ CONSECUTIV:",
+            indicativRefuz,
+            refuzuriConsecutive[indicativRefuz]
+        );
+    }
+
+    console.log(
+        "REFUZ AUTOMAT:",
+        id
+    );
+
+    if (!listaOferte[id]) {
+
+        return res.json({
+            ok: false
+        });
+
+    }
+
+    const oferta =
+        listaOferte[id];
+
+    // --------------------------------------------------------
+    // DACA ERA OFERTA DIN LISTA NORMALA
+    // trecem la urmatorul taxi din statie/traseu
+    // --------------------------------------------------------
+
+    if (!oferta.fallbackActiv) {
+
+        oferta.pozitie++;
+
+        listaOferte[id].forteazaStatie = true;
+
+        // RESET DISTRIBUIRE AUTOMATA
+        listaOferte[id].soferiIncercati = [];
+        listaOferte[id].soferiLiberIncercati = [];
+
+        console.log(
+            "RESET DISTRIBUIRE AUTOMATA:",
+            id
+        );
+
+        trimiteOferta(id);
+
+        return res.json({
+            ok: true
+        });
+
+    }
+
+    // --------------------------------------------------------
+    // DACA ERA FALLBACK
+    // taxiul a fost deja trecut in
+    // soferiLiberiIncercati
+    //
+    // trimiteOferta() va:
+    // 1. reverifica prima statie
+    // 2. cauta urmatorul liber
+    // --------------------------------------------------------
+
+    trimiteOferta(id);
+
+    res.json({
+        ok: true
+    });
+
+});
+
+
+// ============================================================
+// RASPUNS SOFER LA INTREBAREA DE INCHIDERE A STATIEI
+// ============================================================
+
+app.post("/raspuns-inchidere-statie", (req, res) => {
+
+    const indicativ = req.body.indicativ;
+    const statie = req.body.statie;
+    const raspuns = String(req.body.raspuns || "").toUpperCase();
+
+    if (!indicativ || !statie || !["DA", "NU"].includes(raspuns)) {
+
+        return res.json({
+            ok: false,
+            eroare: "Date invalide"
+        });
+
+    }
+
+    if (!raspunsuriInchidereStatii[indicativ]) {
+        raspunsuriInchidereStatii[indicativ] = {};
+    }
+
+    raspunsuriInchidereStatii[indicativ][statie] =
+        raspuns === "DA" ? "RAMANE" : "PLEACA";
+
+    // ========================================================
+    // DA -> SOFERUL RAMANE IN STATIE
+    // ========================================================
+
+    if (raspuns === "DA") {
+
+        console.log(
+            "SOFER RAMANE:",
+            indicativ,
+            "STATIA:",
+            statie.toUpperCase()
+        );
+
+        return res.json({
+            ok: true,
+            actiune: "RAMANE",
+            statie: statie
+        });
+
+    }
+
+    // ========================================================
+    // NU -> SOFERUL PLEACA DIN STATIE
+    // ========================================================
+
+    if (randStatii[statie]) {
+
+        randStatii[statie] =
+            randStatii[statie].filter(s => s !== indicativ);
+
+    }
+
+    if (
+        stareSoferi[indicativ] &&
+        stareSoferi[indicativ].statie === statie
+    ) {
+
+        stareSoferi[indicativ].statie = null;
+
+    }
+
+    console.log(
+        "SOFER PLEACA:",
+        indicativ,
+        "DIN STATIA:",
+        statie.toUpperCase()
+    );
+
+    io.emit(
+        "actualizare_statii",
+        {
+            statii: randStatii,
+            timpuri: timpStatii,
+            soferiGPS: stareSoferi
+        }
+    );
+
+    return res.json({
+        ok: true,
+        actiune: "PLEACA",
+        statie: statie
+    });
+
+});
+
+app.post("/intra-in-statie", (req, res) => {
+
+  const indicativ = req.body.indicativ;
+  const statie = req.body.statie;
+
+  if (!indicativ || !statie) {
+    return res.json({
+      ok: false,
+      eroare: "Lipseste indicativul sau statia"
+    });
+  }
+
+  if (!randStatii[statie]) {
+    randStatii[statie] = [];
+  }
+
+  /*
+   * Daca soferul era deja in alta statie,
+   * il scoatem mai intai de acolo.
+   */
+  if (
+    stareSoferi[indicativ] &&
+    stareSoferi[indicativ].statie &&
+    stareSoferi[indicativ].statie !== statie
+  ) {
+
+    const statieVeche = stareSoferi[indicativ].statie;
+
+    if (randStatii[statieVeche]) {
+      randStatii[statieVeche] =
+        randStatii[statieVeche].filter(s => s !== indicativ);
+    }
+
+    console.log(
+      "SOFER MUTAT:",
+      indicativ,
+      statieVeche.toUpperCase(),
+      "->",
+      statie.toUpperCase()
+    );
+  }
+
+  /*
+   * Memoram oficial ca soferul este in statie.
+   */
+  if (!stareSoferi[indicativ]) {
+    stareSoferi[indicativ] = {
+      statie: null,
+      lat: null,
+      lng: null
+    };
+  }
+
+  stareSoferi[indicativ].statie = statie;
+
+  /*
+   * Il introducem in coada.
+   */
+  if (!randStatii[statie].includes(indicativ)) {
+    randStatii[statie].push(indicativ);
+  }
+
+  io.emit(
+    "actualizare_statii",
+    {
+      statii: randStatii,
+      timpuri: timpStatii,
+      soferiGPS: stareSoferi
+    }
+  );
+
+  console.log(
+    "SOFER IN STATIE:",
+    indicativ,
+    "STATIA:",
+    statie.toUpperCase(),
+    "RAND:",
+    randStatii[statie].join(", ")
+  );
+
+  res.json({
+    ok: true,
+    statie: statie,
+    rand: randStatii[statie]
+  });
+
+});
+
+
+app.post("/iesire-din-statie", (req, res) => {
+
+  const indicativ = req.body.indicativ;
+  const statie = req.body.statie;
+
+  if (!indicativ || !statie) {
+    return res.json({
+      ok: false,
+      eroare: "Lipseste indicativul sau statia"
+    });
+  }
+
+  if (randStatii[statie]) {
+
+    randStatii[statie] =
+      randStatii[statie].filter(s => s !== indicativ);
+
+  }
+
+  /*
+   * Daca aceasta era statia in care era soferul,
+   * o stergem din starea lui.
+   */
+  if (
+    stareSoferi[indicativ] &&
+    stareSoferi[indicativ].statie === statie
+  ) {
+
+    stareSoferi[indicativ].statie = null;
+
+  }
+
+  io.emit(
+    "actualizare_statii",
+    {
+      statii: randStatii,
+      timpuri: timpStatii,
+      soferiGPS: stareSoferi
+    }
+  );
+
+  console.log(
+    "SOFER A IESIT:",
+    indicativ,
+    "DIN:",
+    statie.toUpperCase(),
+    "RAND:",
+    randStatii[statie]
+      ? randStatii[statie].join(", ")
+      : ""
+  );
+
+  res.json({
+    ok: true,
+    statie: statie,
+    rand: randStatii[statie] || []
+  });
+
+});
+
+
+// VERIFICARE OFFLINE DEZACTIVATA
+
+
+app.get("/comanda/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    if (!comenzi[id]) {
+        return res.json({ ok:false });
+    }
+
+    res.json({
+        ok:true,
+        status: comenzi[id].status,
+        sofer: comenzi[id].indicativ
+    });
+
+});
+server.listen(3000, "0.0.0.0", () => {
+console.log("Taxi Paradis ruleaza pe portul 3000");
+});
+
+
+app.post("/trimite-comanda-automat",(req,res)=>{
+
+    let id=req.body.id;
+
+    console.log(
+        "PORNESC DISTRIBUIREA AUTOMATA:",
+        id
+    );
+
+
+    if(!comenzi[id]){
+
+        return res.json({
+            ok:false,
+            mesaj:"Comanda inexistenta"
+        });
+
+    }
+
+
+    if (listaOferte[id]) {
+
+        listaOferte[id].pozitie = 0;
+        listaOferte[id].soferiIncercati = [];
+        listaOferte[id].soferiLiberIncercati = [];
+        listaOferte[id].forteazaStatie = true;
+
+        console.log(
+            "RESET DISTRIBUIRE BUTON AUTOMAT:",
+            id
+        );
+    }
+
+
+    trimiteOferta(id);
+
+
+    res.json({
+
+        ok:true,
+        mesaj:"Oferta trimisa automat"
+
+    });
+
+});
+
+

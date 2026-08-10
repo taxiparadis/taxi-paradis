@@ -1,0 +1,46 @@
+const express = require("express");
+
+const app = express();
+
+let comenzi = [];
+
+app.get("/", (req, res) => {
+
+  let htmlComenzi = "";
+
+  if (comenzi.length === 0) {
+    htmlComenzi = "<p>Nu există comenzi active.</p>";
+  } else {
+    comenzi.forEach((cursa, index) => {
+      htmlComenzi += `
+        <div style="border:1px solid #ccc;padding:10px;margin:10px;">
+          <h3>Comanda #${index + 1}</h3>
+          <p><b>Telefon:</b> ${cursa.telefon}</p>
+          <p><b>Plecare:</b> ${cursa.plecare}</p>
+          <p><b>Destinație:</b> ${cursa.destinatie}</p>
+        </div>
+      `;
+    });
+  }
+
+  res.send(`
+    <h1>🚕 Taxi Paradis</h1>
+    <h2>Comenzi active</h2>
+    ${htmlComenzi}
+  `);
+});
+
+app.get("/comanda", (req, res) => {
+
+  comenzi.push({
+    telefon: req.query.telefon || "Necunoscut",
+    plecare: req.query.plecare || "Necunoscut",
+    destinatie: req.query.destinatie || "Necunoscut"
+  });
+
+  res.send("Comanda a fost adăugată!");
+});
+
+app.listen(3000, () => {
+  console.log("Taxi Paradis rulează pe portul 3000");
+});

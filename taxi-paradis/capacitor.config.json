@@ -1,0 +1,8 @@
+{
+  "appId": "ro.taxiparadis.sofer",
+  "appName": "Taxi Paradis",
+  "webDir": "public",
+  "server": {
+    "url": "https://walks-pot-alabama-utilities.trycloudflare.com/soferi"
+  }
+}

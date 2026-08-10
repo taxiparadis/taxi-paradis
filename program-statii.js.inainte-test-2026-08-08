@@ -1,0 +1,101 @@
+const STATII_PERMANENTE = [
+    "gara",
+    "hcc",
+    "statia2"
+];
+
+const STATII_CU_PROGRAM = [
+    "bcr",
+    "spital",
+    "parc",
+    "statia1",
+    "statia3",
+    "rezi",
+    "targu_vechi",
+    "elena_doamna"
+];
+
+const PROGRAM = {
+    intrebareDimineata: "18:15",
+    deschidere: "00:00",
+
+    // La 18:15 întrebăm șoferii dacă rămân.
+    intrebareSeara: "19:46",
+
+    // La 18:25 avertizăm că urmează închiderea.
+    avertizareInchidere: "19:48",
+
+    // La 18:30 stația este închisă.
+    inchidere: "19:50"
+};
+
+function oraInMinute(ora) {
+    const [ore, minute] = ora.split(":").map(Number);
+    return ore * 60 + minute;
+}
+
+function oraCurentaInMinute() {
+    const acum = new Date();
+
+    return acum.getHours() * 60 + acum.getMinutes();
+}
+
+function esteStatiePermanenta(statie) {
+    return STATII_PERMANENTE.includes(statie);
+}
+
+function esteStatieCuProgram(statie) {
+    return STATII_CU_PROGRAM.includes(statie);
+}
+
+function esteDeschisa(statie) {
+
+    // GARA, HCC și STATIA2 sunt permanent deschise.
+    if (esteStatiePermanenta(statie)) {
+        return true;
+    }
+
+    // Stațiile necunoscute nu sunt blocate de acest modul.
+    if (!esteStatieCuProgram(statie)) {
+        return true;
+    }
+
+    const acum = oraCurentaInMinute();
+
+    const deschidere = oraInMinute(PROGRAM.deschidere);
+    const inchidere = oraInMinute(PROGRAM.inchidere);
+
+    return acum >= deschidere && acum < inchidere;
+}
+
+function esteInPerioadaIntrebareDimineata() {
+    return oraCurentaInMinute() ===
+        oraInMinute(PROGRAM.intrebareDimineata);
+}
+
+function esteInPerioadaIntrebareSeara() {
+    return oraCurentaInMinute() ===
+        oraInMinute(PROGRAM.intrebareSeara);
+}
+
+function esteInPerioadaAvertizareInchidere() {
+    return oraCurentaInMinute() ===
+        oraInMinute(PROGRAM.avertizareInchidere);
+}
+
+function mesajStatieInchisa(statie) {
+    return `Stația ${statie.toUpperCase()} este închisă. Programul stației este ${PROGRAM.deschidere} - ${PROGRAM.inchidere}.`;
+}
+
+module.exports = {
+    STATII_PERMANENTE,
+    STATII_CU_PROGRAM,
+    PROGRAM,
+    esteStatiePermanenta,
+    esteStatieCuProgram,
+    esteDeschisa,
+    esteInPerioadaIntrebareDimineata,
+    esteInPerioadaIntrebareSeara,
+    esteInPerioadaAvertizareInchidere,
+    mesajStatieInchisa
+};

@@ -1,0 +1,153 @@
+const express = require("express");
+const fs = require("fs");
+const http = require("http");
+const { Server } = require("socket.io");
+const db = require("./database");
+
+const app = express();
+app.use(express.json());
+const server = http.createServer(app);
+const io = new Server(server);
+
+let socketSoferi = {};
+let prioritateComanda = null;
+let randStatii = {};
+
+io.on("connection", (socket) => {
+    socket.emit("actualizare_statii", randStatii);
+    if (typeof comenzi !== 'undefined') socket.emit("lista_comenzi", comenzi);
+
+    socket.on("identificare", ({indicativ, parola}) => {
+        db.get(
+            "SELECT * FROM soferi WHERE indicativ=? AND parola=? AND activ=1",
+            [indicativ, parola],
+            (err, sofer)=>{
+                if(err){ console.log(err); return; }
+                if(!sofer){
+                    io.to(socket.id).emit("login_eroare", "Indicativ sau parola gresita");
+                    return;
+                }
+                socketSoferi[indicativ] = socket.id;
+                io.to(socket.id).emit("login_ok", sofer);
+                console.log("SOFER CONECTAT:", indicativ, socket.id);
+            }
+        );
+    });
+
+    socket.on("cerere_statii", () => {
+        socket.emit("actualizare_statii", randStatii);
+    });
+});
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use("/Alerta", express.static("Alerta"));
+app.use(express.static("public"));
+
+let comenzi = [];
+let listaOferte = {};
+
+try { comenzi = JSON.parse(fs.readFileSync("comenzi.json", "utf8")); } catch { comenzi = []; }
+
+function salveazaComenzi() {
+    fs.writeFileSync("comenzi.json", JSON.stringify(comenzi, null, 2));
+}
+
+app.get("/", (req, res) => {
+    let html = "";
+    comenzi.forEach((cursa, index) => {
+        html += `
+        <div style="border:1px solid #ccc;padding:10px;margin:10px;">
+          <h3>Comanda #${index + 1}</h3>
+          <p><b>Data:</b> ${cursa.data}</p>
+          <p><b>Ora:</b> ${cursa.ora}</p>
+          <p><b>Telefon:</b> ${cursa.telefon}</p>
+          <p><b>Plecare:</b> ${cursa.plecare}</p>
+          <p><b>Destinatie:</b> ${cursa.destinatie}</p>
+          <p><b>Status:</b> ${cursa.status}</p>
+          <p><b>Sofer:</b> ${cursa.sofer || "-"}</p>
+          <p><b>Indicativ:</b> ${cursa.indicativ || "-"}</p>
+        </div>`;
+    });
+
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="ro">
+    <head>
+        <meta charset="utf-8">
+        <title>Taxi Paradis - Dispecerat</title>
+        <style>
+            body{ margin:0; font-family:Arial; background:#eceff1; }
+            header{ background:#111827; color:white; padding:20px; text-align:center; font-size:30px; font-weight:bold; }
+            .container{ width:95%; max-width:900px; margin:20px auto; }
+            .formular{ background:white; padding:20px; border-radius:15px; box-shadow:0 3px 10px rgba(0,0,0,.15); }
+            input{ width:100%; padding:12px; margin:8px 0; font-size:16px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box; }
+            button{ padding:12px 20px; background:#16a34a; color:white; border:none; border-radius:8px; cursor:pointer; font-size:17px; }
+        </style>
+    </head>
+    <body>
+        <header>🚖 TAXI PARADIS - DISPECERAT</header>
+        <div class="container">
+            <div class="formular">
+                <h2>Adaugă comandă</h2>
+                <form method="POST" action="/adauga">
+                    <input name="telefon" placeholder="Telefon" required>
+                    <input name="plecare" placeholder="Plecare" required>
+                    <input name="destinatie" placeholder="Destinație" required><br><br>
+                    <button type="submit">🚖 Adaugă comandă</button>
+                </form>
+            </div>
+            <hr>
+            ${html}
+        </div>
+    </body>
+    </html>`);
+}); 
+
+app.post("/schimba-parola", (req,res)=>{
+    const {indicativ, parolaNoua}=req.body;
+    db.run("UPDATE soferi SET parola=? WHERE indicativ=?", [parolaNoua, indicativ], function(err){
+        res.json({ ok: !err });
+    });
+});
+
+app.post("/adauga", (req, res) => {
+    const acum = new Date();
+    comenzi.push({
+        telefon: req.body.telefon,
+        plecare: req.body.plecare,
+        destinatie: req.body.destinatie,
+        data: acum.toLocaleDateString("ro-RO"),
+        ora: acum.toLocaleTimeString("ro-RO"),
+        status: "NOUA", sofer: "", indicativ: "", timp: ""
+    });
+    salveazaComenzi();
+    io.emit("actualizare");
+    res.json({ ok: true });
+});
+
+app.get("/soferi", (req, res) => {
+    res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://unpkg.com">
+        <script src="https://unpkg.com"></script>
+        <title>Sofer Taxi</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <div id="map" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;"></div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/sofer.js"></script>
+    </body>
+    </html>
+    `);
+});
+
+const PORT = 3000;
+server.listen(PORT, () => {
+    console.log("Server Taxi Paradis DEBLOCAT si pornit pe portul " + PORT);
+});
