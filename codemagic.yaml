@@ -4,24 +4,27 @@ workflows:
 
     environment:
       xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: ro.taxiparadis.sofer
 
     scripts:
       - name: Install dependencies
-        script: |
-          npm install
+        script: npm install
 
       - name: Build web app
-        script: |
-          npm run build
+        script: npm run build
 
       - name: Sync Capacitor iOS
-        script: |
-          npx cap sync ios
+        script: npx cap sync ios
+
+      - name: Set up code signing
+        script: xcode-project use-profiles
 
       - name: Build iOS
         script: |
           xcode-project build-ipa \
-            --project "ios/App/App.xcodeproj" \
+            --project "$CM_BUILD_DIR/ios/App/App.xcodeproj" \
             --scheme "App"
 
     artifacts:
