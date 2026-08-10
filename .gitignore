@@ -141,3 +141,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+cloudflared-windows-amd64.exe
+ro_RO-lili-high.onnx
